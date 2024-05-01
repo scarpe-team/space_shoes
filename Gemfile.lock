@@ -1,0 +1,27 @@
+PATH
+  remote: .
+  specs:
+    space_shoes (0.1.0)
+      lacci
+      scarpe-components
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    lacci (0.3.0)
+      scarpe-components
+    minitest (5.22.3)
+    rake (13.2.1)
+    scarpe-components (0.3.0)
+
+PLATFORMS
+  ruby
+  x86_64-darwin-22
+
+DEPENDENCIES
+  minitest (~> 5.16)
+  rake (~> 13.0)
+  space_shoes!
+
+BUNDLED WITH
+   2.5.3
