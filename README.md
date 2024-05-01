@@ -40,6 +40,19 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/scarpe-team/space_shoes. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/scarpe-team/space_shoes/blob/main/CODE_OF_CONDUCT.md).
 
+## References
+
+This will package gems in ruby.wasm, built into the Ruby binary
+    bundle exec rbwasm build --ruby-version 3.3 -o ruby.wasm
+
+Think we can use the built Ruby-with-gems with rbwasm pack to combine with source dir
+    bundle exec rbwasm pack ruby.wasm --mapdir GUESTDIR:HOSTDIR -o packed_ruby.wasm
+
+To install wasmtime for testing: https://github.com/bytecodealliance/wasmtime
+
+EvilMartians blog post on using Ruby.wasm's Bundler integration
+    https://evilmartians.com/chronicles/first-steps-with-ruby-wasm-or-building-ruby-next-playground
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

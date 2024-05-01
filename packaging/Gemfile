@@ -1,0 +1,6 @@
+source "https://rubygems.org"
+
+gem "space_shoes", path: ".."
+
+gem "ruby_wasm", "~> 2.5"
+gem "js"

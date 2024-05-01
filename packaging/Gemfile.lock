@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ..
   specs:
     space_shoes (0.1.0)
       lacci
@@ -11,20 +11,26 @@ GEM
     js (2.5.1)
     lacci (0.3.0)
       scarpe-components
-    minitest (5.22.3)
-    rake (13.2.1)
     ruby_wasm (2.5.1)
+    ruby_wasm (2.5.1-aarch64-linux)
+    ruby_wasm (2.5.1-aarch64-linux-musl)
+    ruby_wasm (2.5.1-arm64-darwin)
     ruby_wasm (2.5.1-x86_64-darwin)
+    ruby_wasm (2.5.1-x86_64-linux)
+    ruby_wasm (2.5.1-x86_64-linux-musl)
     scarpe-components (0.3.0)
 
 PLATFORMS
+  aarch64-linux
+  aarch64-linux-musl
+  arm64-darwin
   ruby
-  x86_64-darwin-22
+  x86_64-darwin
+  x86_64-linux
+  x86_64-linux-musl
 
 DEPENDENCIES
   js
-  minitest (~> 5.16)
-  rake (~> 13.0)
   ruby_wasm (~> 2.5)
   space_shoes!
 

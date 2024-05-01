@@ -6,3 +6,5 @@
 /pkg/
 /spec/reports/
 /tmp/
+space_shoes-*.gem
+**/.DS_Store
