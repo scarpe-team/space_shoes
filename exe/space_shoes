@@ -1,0 +1,195 @@
+#!/usr/bin/env ruby
+
+# First we need to load Scarpe-Components and Lacci, which means figuring out where from.
+
+# --dev option applies to all actions
+use_dev = ARGV.delete("--dev") ? true : false
+use_debug = ARGV.delete("--debug") ? true : false
+use_rebuild = ARGV.delete("--rebuild") ? true : false
+use_prepack = ARGV.delete("--prepack") ? true : false
+use_help = ARGV.delete("--help") ? true : false
+
+# Default to local webview display if not otherwise given
+ENV['SCARPE_DISPLAY'] ||= 'wasm_local'
+
+if use_debug
+  ENV['SCARPE_DEBUG'] = 'true'
+end
+if use_dev
+  dev_path = File.expand_path("../lib", __dir__)
+  $LOAD_PATH.prepend dev_path
+
+  require 'bundler/setup'
+  #Bundler.require(:default)
+end
+
+require "space_shoes"
+#require "space_shoes/http_server"
+require "scarpe/components/version"
+
+require "shoes"
+require "lacci/version"
+require "lacci/scarpe_cli"
+
+require "fileutils"
+
+include Scarpe::CLI
+
+# We need to not use syntactic features of very recent Rubies in this file, so that it parses
+# correctly in earlier Rubies and can successfully give the version-check error.
+version_check
+
+def print_usage
+  puts <<~'USAGE'
+    Usage: #{$0} [OPTIONS] <scarpe app file>            # Same as "scarpe run"
+           #{$0} [OPTIONS] run <scarpe app file>
+           #{$0} [OPTIONS] src-package <scarpe app dir> [<install dir>] # package a dir with src and Gemfile inside
+           #{$0} [OPTIONS] env                          # print Shoes-related environment settings
+           #{$0} -v                                     # print the gem version(s) and exit
+      Options:
+          --help                         Print usage and exit
+          --dev                          Use development local scarpe, not an installed gem
+          --debug                        Turn on application debug mode
+          --rebuild                      Rebuild default-package code for run even if recent
+          --prepack                      When building a package, keep a local unpacked dir for debugging
+  USAGE
+end
+
+if use_help
+  print_usage
+  exit 0
+end
+
+add_env_categories("SpaceShoes" => [
+  #env_or_default("SCARPE_TEST_CONTROL", "(none)"),
+])
+
+verb = "run"
+verb_target = nil
+
+case ARGV[0]
+when "-v"
+  # This will be fine, pass it through.
+  verb = "-v"
+when "env"
+  if ARGV.length != 1
+    print_usage
+    exit -1
+  end
+
+  verb = "env"
+when "src-package"
+  if ARGV.length < 2 || ARGV.length > 3
+    print_usage
+    exit -1
+  end
+  verb = ARGV[0]
+  verb_target = ARGV[1]
+  verb_target_2 = ARGV[2] || Dir.pwd
+when "run"
+  if ARGV.length != 2
+    print_usage
+    exit -1
+  end
+  verb = ARGV[0]
+  verb_target = ARGV[1]
+else
+  # Default to run
+  if ARGV.length != 1
+    print_usage
+    exit -1
+  end
+  verb_target = ARGV[0]
+end
+
+case verb
+when "-v"
+  puts "SpaceShoes #{SpaceShoes::VERSION}"
+  puts "Scarpe-Components #{Scarpe::Components::VERSION}"
+  puts "Lacci #{Lacci::VERSION}"
+when "src-package"
+  app_dir = File.expand_path(verb_target)
+  install_dir = File.expand_path(verb_target_2)
+  p = SpaceShoes::Packaging::Package.new app_dir:, install_dir:, prepack: use_prepack
+  p.build
+  puts "Built Wasm package, installed to #{p.install_dir}."
+when "run"
+  raise "Can't find file: #{verb_target.inspect}!" unless File.exist?(verb_target)
+
+  pkg = Scarpe::Wasm::Packaging.default_package(prepack: use_prepack)
+  # If you use --dev, need to rebuild the default package every time since it's local files.
+  # If we're using a path: or git: source, don't think there's an easy way to detect that
+  # and auto-rebuild every time.
+  if use_rebuild || use_dev
+    pkg.clean_app_dir
+    pkg.build(force: true)
+  else
+    # This makes sure there's a fairly recent build, but doesn't build if something recent exists.
+    # Note that it does *not* try to inspect the relevant framework dirs for changes, just checks
+    # how old the build file is.
+    Scarpe::Wasm::Packaging.ensure_default_build
+  end
+
+  index_name = pkg.build_app_index(verb_target)
+  index_url = "http://localhost:8080/#{index_name}"
+  puts "URL: #{index_url}"
+
+  if verb_target.end_with?(".rb")
+    system("open -a \"Google Chrome\" #{index_url}")
+    # Let the HTTP server run until the user cancels it
+    Scarpe::Wasm::HTTPServer.new(dir: pkg.install_dir, port: 8080).start
+  elsif verb_target.end_with?(".sspec") || verb_target.end_with?(".scas")
+    require "scarpe/components/segmented_file_loader"
+    code = File.read verb_target
+    _fm, segmap = Scarpe::Components::SegmentedFileLoader.front_matter_and_segments_from_file(code)
+    if segmap.size == 1
+      # No test code - just run until the user cancels
+      Scarpe::Wasm::HTTPServer.new(dir: pkg.install_dir, port: 8080).start
+      # This should never be reached
+      exit -1
+    end
+    test_code = segmap.values[1]
+
+    require "scarpe/wasm/shoes-spec"
+
+    begin
+      pid = fork do
+        Scarpe::Wasm::HTTPServer.new(dir: pkg.install_dir, port: 8080).start
+      end
+
+      require 'selenium-webdriver'
+      Capybara.register_driver :logging_selenium_chrome_headless do |app|
+        options = Selenium::WebDriver::Chrome::Options.new
+        options.add_option("goog:loggingPrefs", {browser: 'ALL'})
+        options.add_argument("--headless")
+
+        Capybara::Selenium::Driver.new(app,
+                                       options:,
+                                       browser: :chrome,
+                                       )
+      end
+      Capybara.default_driver = :logging_selenium_chrome_headless
+      Capybara.run_server = false
+      Capybara.app_host = "http://localhost:8080"
+
+      puts "\nTo manually view the Shoes app for this test, run:"
+      puts "  * (in #{File.expand_path Dir.pwd}) ruby -run -e httpd . -p 8080"
+      puts "  * open -a \"Google Chrome\" #{index_url}"
+      puts
+
+      class RunCommandLineShoesSpecTests < Scarpe::Wasm::CapybaraTestCase; end
+      RunCommandLineShoesSpecTests.define_method("test_command_line") do
+        run_shoes_spec_code(index_url) { eval test_code }
+      end
+      Minitest.run []
+    ensure
+      Process.kill("KILL", pid) if pid
+    end
+  else
+    raise "Unrecognized Shoes extension for file #{verb_target.inspect}!"
+  end
+when "env"
+  print_env
+else
+  raise "Internal error! Unknown ./exe/scarpe verb!"
+end
