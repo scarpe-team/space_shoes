@@ -1,3 +1,18 @@
+GIT
+  remote: https://github.com/scarpe-team/scarpe.git
+  revision: dea674dcbb612a3b1da9de6a52e8607cf9c5288b
+  glob: lacci/lacci.gemspec
+  specs:
+    lacci (0.3.0)
+      scarpe-components
+
+GIT
+  remote: https://github.com/scarpe-team/scarpe.git
+  revision: dea674dcbb612a3b1da9de6a52e8607cf9c5288b
+  glob: scarpe-components/scarpe-components.gemspec
+  specs:
+    scarpe-components (0.3.0)
+
 PATH
   remote: .
   specs:
@@ -9,13 +24,10 @@ GEM
   remote: https://rubygems.org/
   specs:
     js (2.5.1)
-    lacci (0.3.0)
-      scarpe-components
     minitest (5.22.3)
     rake (13.2.1)
     ruby_wasm (2.5.1)
     ruby_wasm (2.5.1-x86_64-darwin)
-    scarpe-components (0.3.0)
 
 PLATFORMS
   ruby
@@ -23,9 +35,11 @@ PLATFORMS
 
 DEPENDENCIES
   js
+  lacci!
   minitest (~> 5.16)
   rake (~> 13.0)
   ruby_wasm (~> 2.5)
+  scarpe-components!
   space_shoes!
 
 BUNDLED WITH
