@@ -1,16 +1,22 @@
 # SpaceShoes
 
-SpaceShoes allows embedding Ruby GUI code in your web pages. Its based on the old Shoes library by \_why, and by Giovanni Borgh's work on [Scarpe-Wasm](https://github.com/scarpe-team/scarpe-wasm).
+SpaceShoes allows embedding Ruby GUI code in your web pages. You can embed simple Ruby GUI applications directly or you can write a multi-file application and package it up to be loaded from the page or pages of your choice.
+
+SpaceShoes is based on [Scarpe](https://github.com/scarpe-team/scarpe), which is a reimplementation of Shoes by [_why the lucky stiff](https://en.wikipedia.org/wiki/Why_the_lucky_stiff). It contains a lot of code from [Scarpe-Wasm](https://github.com/scarpe-team/scarpe-wasm) by [Giovanni Borgh](https://github.com/alawysdelta/) and [Noah Gibbs](https://github.com/noahgibbs).
 
 ## Javascript-Based Installation
 
 SpaceShoes operates in two ways. You can use it in a Ruby application and bundle that into a web site. Or you can use it via a Wasm module included from Javascript.
 
-JS-based installation is useful if you have a single Shoes file with no additional files included, or with only files you can include via URL. It's also a great way to experiment with SpaceShoes without a complicated installation.
+JS-based installation is useful if you have a single Shoes file with no additional files included, or with only files you can reference via URL. It's a great way to experiment with SpaceShoes without repeated build steps.
+
+You'll still need to create a Wasm module containing the SpaceShoes code and some default gems and so on.
+
+    $ space_shoes build-default
 
 (MORE INSTALL INSTRUCTIONS HERE)
 
-## Ruby-Based Installation
+## Ruby-Based Applications
 
 If you want or need multiple files bundled into a Wasm module, you'll start from the Ruby side.
 
@@ -21,6 +27,14 @@ Install the gem and add to the application's Gemfile by executing:
 If bundler is not being used to manage dependencies, install the gem by executing:
 
     $ gem install space_shoes
+
+You can directly run SpaceShoes-based apps from the command line, which will package the application and run a browser:
+
+    $ space_shoes my_app.rb
+
+You can also package a SpaceShoes application to be included in a web page of your choice:
+
+    $ space_shoes src-package my_app_dir
 
 (MORE INSTALL INSTRUCTIONS HERE)
 
@@ -52,6 +66,12 @@ To install wasmtime for testing: https://github.com/bytecodealliance/wasmtime
 
 EvilMartians blog post on using Ruby.wasm's Bundler integration
     https://evilmartians.com/chronicles/first-steps-with-ruby-wasm-or-building-ruby-next-playground
+
+## History
+
+[Giovanni Borgh](https://github.com/alawysdelta/) wrote the initial scarpe-wasm code, including tools like wasify, for his Google Summer of Code project. Noah Gibbs then adapted it to Scarpe and its dependencies (e.g. Lacci, Scarpe-Components, Calzini).
+
+The top-level structure of SpaceShoes is different from scarpe-wasm. But a lot of the actual initial code comes from scarpe-wasm and was co-written by Noah Gibbs and/or Giovanni Borgh. The import of scarpe-wasm doesn't attempt to tease all this apart accurately - there are some commits that credit Giovanni as co-author in general, but mostly the code is just copied over.
 
 ## License
 
