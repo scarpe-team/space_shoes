@@ -1,16 +1,17 @@
 #!/usr/bin/env ruby
 
+# This file is used on the Ruby side to package and run SpaceShoes apps.
+
 # First we need to load Scarpe-Components and Lacci, which means figuring out where from.
 
 # --dev option applies to all actions
 use_dev = ARGV.delete("--dev") ? true : false
 use_debug = ARGV.delete("--debug") ? true : false
 use_rebuild = ARGV.delete("--rebuild") ? true : false
-use_prepack = ARGV.delete("--prepack") ? true : false
 use_help = ARGV.delete("--help") ? true : false
 
 # Default to local webview display if not otherwise given
-ENV['SCARPE_DISPLAY'] ||= 'wasm_local'
+ENV['SCARPE_DISPLAY'] ||= 'space_shoes'
 
 if use_debug
   ENV['SCARPE_DEBUG'] = 'true'
@@ -23,8 +24,8 @@ if use_dev
   #Bundler.require(:default)
 end
 
-require "space_shoes"
 #require "space_shoes/http_server"
+require "space_shoes/packaging"
 require "scarpe/components/version"
 
 require "shoes"
@@ -40,12 +41,14 @@ include Scarpe::CLI
 version_check
 
 def print_usage
-  puts <<~'USAGE'
-    Usage: #{$0} [OPTIONS] <scarpe app file>            # Same as "scarpe run"
-           #{$0} [OPTIONS] run <scarpe app file>
-           #{$0} [OPTIONS] src-package <scarpe app dir> [<install dir>] # package a dir with src and Gemfile inside
-           #{$0} [OPTIONS] env                          # print Shoes-related environment settings
-           #{$0} -v                                     # print the gem version(s) and exit
+  cmd_name = $0.split('/').last
+  puts <<~USAGE
+    Usage: #{cmd_name} [OPTIONS] <scarpe app file>            # Same as "scarpe run"
+           #{cmd_name} [OPTIONS] run <scarpe app file>
+           #{cmd_name} [OPTIONS] build-ruby
+           #{cmd_name} [OPTIONS] src-package <scarpe app dir> [<install dir>] # package a dir with src and Gemfile inside
+           #{cmd_name} [OPTIONS] env                          # print Shoes-related environment settings
+           #{cmd_name} -v                                     # print the gem version(s) and exit
       Options:
           --help                         Print usage and exit
           --dev                          Use development local scarpe, not an installed gem
@@ -71,13 +74,13 @@ case ARGV[0]
 when "-v"
   # This will be fine, pass it through.
   verb = "-v"
-when "env"
+when "env", "build-ruby"
   if ARGV.length != 1
     print_usage
     exit -1
   end
 
-  verb = "env"
+  verb = ARGV[0]
 when "src-package"
   if ARGV.length < 2 || ARGV.length > 3
     print_usage
@@ -107,6 +110,8 @@ when "-v"
   puts "SpaceShoes #{SpaceShoes::VERSION}"
   puts "Scarpe-Components #{Scarpe::Components::VERSION}"
   puts "Lacci #{Lacci::VERSION}"
+when "build-ruby"
+  SpaceShoes::Packaging.build_ruby_wasm_binary
 when "src-package"
   app_dir = File.expand_path(verb_target)
   install_dir = File.expand_path(verb_target_2)

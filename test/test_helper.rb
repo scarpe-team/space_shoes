@@ -5,7 +5,7 @@ ENV["SCARPE_DISPLAY_SERVICE"] ||= "space_shoes"
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 
-require "space_shoes"
+require "space_shoes/packaging"
 
 require "fileutils"
 require "socket"
@@ -35,5 +35,21 @@ Capybara.run_server = false
 Capybara.app_host = "http://localhost:8080"
 # In setup, this will change the Capybara driver
 #Capybara.current_driver = :selenium_headless # example: use headless Firefox
+
+class SpaceShoesCLITest < Minitest::Test
+  ROOT_DIR = File.expand_path(File.join(__dir__, ".."))
+
+  include Scarpe::Test::Helpers
+  include Scarpe::Components::ProcessHelpers # May be patched via space_shoes/packaging.rb!
+
+  def out_or_fail(cmd)
+    out, err, success = run_out_err_result(cmd)
+    unless success
+      STDERR.puts "Output:\n#{out}\n=======\n#{err}\n=======\n"
+      raise SpaceShoes::Error, "Failed while trying to run command: #{cmd.inspect}"
+    end
+    out
+  end
+end
 
 require "minitest/autorun"

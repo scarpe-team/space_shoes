@@ -8,17 +8,7 @@ class TestSpaceShoes < Minitest::Test
   end
 end
 
-class TestSpaceShoesCommand < Minitest::Test
-  ROOT_DIR = File.expand_path(File.join(__dir__, ".."))
-
-  def out_or_fail(cmd)
-    out = `#{cmd}`
-    unless $?.success?
-      raise SpaceShoes::Error, "Failed while trying to run command: #{cmd.inspect}"
-    end
-    out
-  end
-
+class TestSpaceShoesSimpleCommands < SpaceShoesCLITest
   def test_space_shoes_cmd_with_dash_v
     Dir.chdir(ROOT_DIR) do
       out = out_or_fail "exe/space_shoes --dev -v"
@@ -32,6 +22,22 @@ class TestSpaceShoesCommand < Minitest::Test
     Dir.chdir(ROOT_DIR) do
       out = out_or_fail "exe/space-shoes --dev -v"
       assert_includes out, "SpaceShoes"
+    end
+  end
+
+  def test_space_shoes_env
+    Dir.chdir(ROOT_DIR) do
+      out = out_or_fail "exe/space_shoes --dev env"
+      assert_includes out, "SpaceShoes environment"
+      assert_includes out, "Ruby and Shell environment"
+    end
+  end
+end
+
+class TestSpaceShoesBuild < SpaceShoesCLITest
+  def test_space_shoes_build_ruby
+    Dir.chdir(ROOT_DIR) do
+      out = out_or_fail "exe/space-shoes --dev build-ruby"
     end
   end
 end
