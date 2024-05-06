@@ -74,6 +74,10 @@ module SpaceShoes
       end
     end
 
+    def build_default_wasm_package
+      raise "GOT HERE"
+    end
+
     Packaging.extend PackagingCommands
   end
 end

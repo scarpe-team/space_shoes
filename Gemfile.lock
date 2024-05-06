@@ -1,24 +1,24 @@
 GIT
   remote: https://github.com/scarpe-team/scarpe.git
-  revision: dea674dcbb612a3b1da9de6a52e8607cf9c5288b
+  revision: 3c094c49bf0e0720482ed06041bdb20dcba4ffdb
   glob: lacci/lacci.gemspec
   specs:
-    lacci (0.3.0)
-      scarpe-components
+    lacci (0.4.0)
+      scarpe-components (~> 0.4.0)
 
 GIT
   remote: https://github.com/scarpe-team/scarpe.git
-  revision: dea674dcbb612a3b1da9de6a52e8607cf9c5288b
+  revision: 3c094c49bf0e0720482ed06041bdb20dcba4ffdb
   glob: scarpe-components/scarpe-components.gemspec
   specs:
-    scarpe-components (0.3.0)
+    scarpe-components (0.4.0)
 
 PATH
   remote: .
   specs:
     space_shoes (0.1.0)
-      lacci
-      scarpe-components
+      lacci (~> 0.4.0)
+      scarpe-components (~> 0.4.0)
 
 GEM
   remote: https://rubygems.org/
@@ -35,7 +35,7 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
-    js (2.5.1)
+    js (2.6.0)
     matrix (0.4.2)
     mini_mime (1.1.5)
     mini_portile2 (2.8.6)
@@ -53,8 +53,8 @@ GEM
     rake (13.2.1)
     regexp_parser (2.9.0)
     rexml (3.2.6)
-    ruby_wasm (2.5.1)
-    ruby_wasm (2.5.1-x86_64-darwin)
+    ruby_wasm (2.6.0)
+    ruby_wasm (2.6.0-x86_64-darwin)
     rubyzip (2.3.2)
     selenium-webdriver (4.20.1)
       base64 (~> 0.2)

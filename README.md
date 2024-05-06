@@ -8,9 +8,9 @@ SpaceShoes is based on [Scarpe](https://github.com/scarpe-team/scarpe), which is
 
 SpaceShoes operates in two ways. You can use it in a Ruby application and bundle that into a web site. Or you can use it via a Wasm module included from Javascript.
 
-JS-based installation is useful if you have a single Shoes file with no additional files included, or with only files you can reference via URL. It's a great way to experiment with SpaceShoes without repeated build steps.
+JS-based installation is useful if you have a single Shoes file with no additional files included, or with only assets you can reference via URL. It's a great way to experiment with SpaceShoes without repeated build steps.
 
-You'll still need to create a Wasm module containing the SpaceShoes code and some default gems and so on.
+You'll still need to create a Wasm module containing the SpaceShoes code and some default gems and so on. Eventually we'll have a prebuilt default for this accessible directly, but for now you'll have to build your own.
 
     $ space_shoes build-default
 
