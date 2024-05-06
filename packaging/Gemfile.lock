@@ -2,23 +2,23 @@ PATH
   remote: ..
   specs:
     space_shoes (0.1.0)
-      lacci
-      scarpe-components
+      lacci (~> 0.4.0)
+      scarpe-components (~> 0.4.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    js (2.5.1)
-    lacci (0.3.0)
-      scarpe-components
-    ruby_wasm (2.5.1)
-    ruby_wasm (2.5.1-aarch64-linux)
-    ruby_wasm (2.5.1-aarch64-linux-musl)
-    ruby_wasm (2.5.1-arm64-darwin)
-    ruby_wasm (2.5.1-x86_64-darwin)
-    ruby_wasm (2.5.1-x86_64-linux)
-    ruby_wasm (2.5.1-x86_64-linux-musl)
-    scarpe-components (0.3.0)
+    js (2.6.0)
+    lacci (0.4.0)
+      scarpe-components (~> 0.4.0)
+    ruby_wasm (2.6.0)
+    ruby_wasm (2.6.0-aarch64-linux)
+    ruby_wasm (2.6.0-aarch64-linux-musl)
+    ruby_wasm (2.6.0-arm64-darwin)
+    ruby_wasm (2.6.0-x86_64-darwin)
+    ruby_wasm (2.6.0-x86_64-linux)
+    ruby_wasm (2.6.0-x86_64-linux-musl)
+    scarpe-components (0.4.0)
 
 PLATFORMS
   aarch64-linux

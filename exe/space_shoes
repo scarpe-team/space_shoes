@@ -24,6 +24,12 @@ if use_dev
   #Bundler.require(:default)
 end
 
+begin
+  require "space_shoes/version"
+rescue LoadError
+  STDERR.puts "Unable to load space_shoes gem. Do you need --dev, or for the gem to be installed?"
+end
+
 #require "space_shoes/http_server"
 require "space_shoes/packaging"
 require "scarpe/components/version"
@@ -113,7 +119,7 @@ when "-v"
   puts "Lacci #{Lacci::VERSION}"
 when "build-ruby"
   SpaceShoes::Packaging.build_ruby_wasm_binary
-when "build-ruby"
+when "build-default"
   SpaceShoes::Packaging.build_default_wasm_package
 when "src-package"
   app_dir = File.expand_path(verb_target)
