@@ -20,5 +20,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+      - name: Print out Bundler environment
+        run: bundle exec gem env
       - name: Run tests
         run: bundle exec rake test
