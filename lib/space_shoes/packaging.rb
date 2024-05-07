@@ -24,11 +24,12 @@ module SpaceShoes
     end
 
     # This builds unconditionally, and is very slow the first time.
-    def build_ruby_wasm_binary(out_file: "ruby_wasm")
+    # TODO: move the built ruby.wasm binary to a shared dir outside the packaging dirs.
+    def build_ruby_wasm_binary
       Dir.chdir(PACKAGING_ROOT) do
         # Use the packaging dir's Bundler setup, not what the outer program was run with
         Bundler.with_unbundled_env do
-          run_or_raise("bundle exec rbwasm build -o #{out_file}")
+          run_or_raise("bundle exec rbwasm build -o ruby.wasm")
         end
       end
     end
@@ -38,8 +39,13 @@ module SpaceShoes
       end
     end
 
+    # Note: built Ruby and packed Ruby+source package should *both* be outside the app dir (a.k.a. src dir)
     def build_default_wasm_package
-      raise "GOT HERE"
+      build_ruby_wasm_binary
+      Dir.chdir(PACKAGING_ROOT + "/default") do
+        # Does this wind up double-packaging anything? Do we need a src subdir to make this work?
+        run_or_raise("bundle exec rbwasm pack ../ruby.wasm --mapdir /src::. -o ../packed_ruby.wasm")
+      end
     end
 
     Packaging.extend PackagingCommands

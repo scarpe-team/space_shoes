@@ -1,4 +1,4 @@
 build
 rubies
 ruby.wasm
-ruby_wasm
+packed_ruby.wasm
