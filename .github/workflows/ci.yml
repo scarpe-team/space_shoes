@@ -22,8 +22,8 @@ jobs:
           bundler-cache: true
       - name: install gems in packaging dir
         uses: ruby/setup-ruby@v1
-        working-directory: packaging
         with:
+          working-directory: packaging
           bundler-cache: true
       - name: Print out Bundler environment
         run: bundle exec gem env
