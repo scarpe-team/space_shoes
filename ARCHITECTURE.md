@@ -1,6 +1,12 @@
 # SpaceShoes Architecture
 
-## Wasm Builds
+## Build Dirs
+
+Right now (8 May 2024) we build in the app directory itself. That leaves a lot of files behind. It's not obvious what the right way to avoid it is, though -- wherever we run rbwasm, that directory needs the right Gemfile and Gemfile.lock, and the build looks like it may pick up whatever files are in that directory.
+
+It would be nice to be able to build more cleanly. For instance, imagine doing a Ruby build that could be shared between all apps so we didn't need to re-download and re-build Ruby for each app. You can get some of this by a single default Wasm build. But apps that need extra gems clearly can't use that, and apps that need extra files may or may not be able to.
+
+## Distributed Wasm Builds
 
 Once things stabilise, we should make a basic default build with reasonable gems per-release that can be used directly (from Github?). This is for the single-file simple JS-based install. It should also be easy to make a default build locally, well before that.
 
