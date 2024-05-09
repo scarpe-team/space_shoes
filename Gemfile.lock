@@ -61,6 +61,7 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    webrick (1.8.1)
     websocket (1.2.10)
     xpath (3.2.0)
       nokogiri (~> 1.8)
@@ -79,6 +80,7 @@ DEPENDENCIES
   scarpe-components!
   selenium-webdriver
   space_shoes!
+  webrick (~> 1.8.1)
 
 BUNDLED WITH
    2.5.3

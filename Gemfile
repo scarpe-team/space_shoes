@@ -11,6 +11,7 @@ gem "js"
 group :development do
   gem "rake", "~> 13.0"
   gem "minitest", "~> 5.16"
+  gem "webrick", "~> 1.8.1"
   gem "capybara"
   gem "selenium-webdriver"
 end

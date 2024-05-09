@@ -64,6 +64,8 @@ Think we can use the built Ruby-with-gems with rbwasm pack to combine with sourc
 
 To install wasmtime for testing: https://github.com/bytecodealliance/wasmtime
 
+Single-line HTTP server: "ruby -run -e httpd -- -p 4321 ."
+
 EvilMartians blog post on using Ruby.wasm's Bundler integration
     https://evilmartians.com/chronicles/first-steps-with-ruby-wasm-or-building-ruby-next-playground
 
