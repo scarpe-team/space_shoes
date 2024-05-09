@@ -6,6 +6,10 @@ Right now (8 May 2024) we build in the app directory itself. That leaves a lot o
 
 It would be nice to be able to build more cleanly. For instance, imagine doing a Ruby build that could be shared between all apps so we didn't need to re-download and re-build Ruby for each app. You can get some of this by a single default Wasm build. But apps that need extra gems clearly can't use that, and apps that need extra files may or may not be able to.
 
+## Files and Paths
+
+The app directory that gets packed will have random files show up in the Wasi-Wasm file system (e.g. shows up with Dir.glob). However, mapped directories (e.g. src) do *not* show up with Dir.glob. So you have to already know they're there and change to them.
+
 ## Distributed Wasm Builds
 
 Once things stabilise, we should make a basic default build with reasonable gems per-release that can be used directly (from Github?). This is for the single-file simple JS-based install. It should also be easy to make a default build locally, well before that.
