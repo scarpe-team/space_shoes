@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+  <script type="module">
+    // Do we have to match the wasm-wasi JS version here with the ruby.wasm
+    // version we used to build the Wasm package below?
+    import { DefaultRubyVM } from "https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@2.6.0/dist/browser/+esm";
+
+    // For Locally-compiled Ruby.wasm VM:
+    const response = await fetch("./packed_ruby.wasm");
+    const module = await WebAssembly.compileStreaming(response);
+
+    const { vm } = await DefaultRubyVM(module);
+
+    window.rubyVM = vm;
+
+    vm.eval(`
+      require "/bundle/setup"
+      require "js" # Needed even with /bundle/setup
+      $LOAD_PATH.unshift "/spaceshoes_lib"
+      require "space_shoes/core"
+      require "scarpe/space_shoes" # Scarpe display service for SpaceShoes
+    `);
+
+  </script>
+
+  <script type="application/shoes">
+    Shoes.app do
+      button "OK"
+    end
+  </script>
+
+  </head>
+  <body>
+  </body>
+</html>
+
