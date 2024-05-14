@@ -31,7 +31,9 @@ PLATFORMS
 
 DEPENDENCIES
   js
+  lacci (~> 0.4.0)
   ruby_wasm (~> 2.5)
+  scarpe-components (~> 0.4.0)
   space_shoes!
 
 BUNDLED WITH

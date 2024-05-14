@@ -4,3 +4,5 @@ gem "space_shoes", path: ".."
 
 gem "ruby_wasm", "~> 2.5"
 gem "js"
+gem "lacci", "~>0.4.0"
+gem "scarpe-components", "~>0.4.0"
