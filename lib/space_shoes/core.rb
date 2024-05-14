@@ -8,3 +8,11 @@ require_relative "version"
 module SpaceShoes
   class Error < StandardError; end
 end
+
+# Guest errors, used by Wasm code
+module SpaceShoes::Errors
+  class MissingDocRootError < SpaceShoes::Error; end
+  class BadDisplayClassType < SpaceShoes::Error; end
+  class MissingClassError < SpaceShoes::Error; end
+  class MissingAttributeError < SpaceShoes::Error; end
+end

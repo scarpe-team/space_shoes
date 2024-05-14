@@ -5,7 +5,7 @@ ENV["SCARPE_DISPLAY_SERVICE"] ||= "space_shoes"
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 
-require "space_shoes/packaging"
+require "space_shoes/host/packaging"
 
 require "fileutils"
 require "socket"

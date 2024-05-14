@@ -4,6 +4,7 @@ ENV['SCARPE_DISPLAY_SERVICE'] = "space_shoes"
 
 require "shoes"
 require "lacci/scarpe_core"
+require "space_shoes/core"
 
 require "scarpe/components/string_helpers"
 
@@ -11,11 +12,6 @@ require "scarpe/components/string_helpers"
 require "scarpe/components/print_logger"
 Shoes::Log.instance = Scarpe::Components::PrintLogImpl.new
 Shoes::Log.configure_logger(Shoes::Log::DEFAULT_LOG_CONFIG)
-
-require "scarpe/components/segmented_file_loader"
-loader = Scarpe::Components::SegmentedFileLoader.new
-
-Shoes.add_file_loader loader
 
 Shoes::FONTS.push(
   "Helvetica",
@@ -43,6 +39,11 @@ Shoes::Spec.instance = Scarpe::Test
 require "scarpe/components/html"
 module SpaceShoes
   HTML = Scarpe::Components::HTML
+
+  require "scarpe/components/segmented_file_loader"
+  loader = Scarpe::Components::SegmentedFileLoader.new
+  Shoes.add_file_loader loader
+
   DEFAULT_FILE_LOADER = loader
 
   class Drawable < Shoes::Linkable
@@ -58,43 +59,39 @@ end
 # So it's used to link to JS, and to instantiate drawables, but not
 # for e.g. packaging.
 
-require_relative "space_shoes/version"
-#require_relative "space_shoes/errors"
-#
-#require_relative "space_shoes/wasm_calls"
-#require_relative "space_shoes/web_wrangler"
-#require_relative "space_shoes/control_interface"
-#
-#require_relative "space_shoes/drawable"
-#require_relative "space_shoes/wasm_local_display"
-#
-#require_relative "space_shoes/radio"
-#
-#require_relative "space_shoes/art_drawables"
-#
-#require_relative "space_shoes/app"
-#require_relative "space_shoes/para"
-#require_relative "space_shoes/slot"
-#require_relative "space_shoes/stack"
-#require_relative "space_shoes/flow"
-#require_relative "space_shoes/document_root"
-#require_relative "space_shoes/subscription_item"
-#require_relative "space_shoes/button"
-#require_relative "space_shoes/progress"
-#require_relative "space_shoes/image"
-#require_relative "space_shoes/edit_box"
-#require_relative "space_shoes/edit_line"
-#require_relative "space_shoes/list_box"
-#require_relative "space_shoes/shape"
-#
-#require_relative "space_shoes/text_drawable"
-#require_relative "space_shoes/link"
-#require_relative "space_shoes/video"
-#require_relative "space_shoes/check"
+require "space_shoes/version"
+require "space_shoes/guest/display_service"
+require "space_shoes/guest/drawable"
 
-require_relative "space_shoes/space_shoes_local_display"
+#require "space_shoes/wasm_calls"
+#require "space_shoes/web_wrangler"
+#require "space_shoes/control_interface"
+#
+#require "space_shoes/radio"
+#
+#require "space_shoes/art_drawables"
+#
+#require "space_shoes/app"
+#require "space_shoes/para"
+#require "space_shoes/slot"
+#require "space_shoes/stack"
+#require "space_shoes/flow"
+#require "space_shoes/document_root"
+#require "space_shoes/subscription_item"
+#require "space_shoes/button"
+#require "space_shoes/progress"
+#require "space_shoes/image"
+#require "space_shoes/edit_box"
+#require "space_shoes/edit_line"
+#require "space_shoes/list_box"
+#require "space_shoes/shape"
+#
+#require "space_shoes/text_drawable"
+#require "space_shoes/link"
+#require "space_shoes/video"
+#require "space_shoes/check"
 
-Shoes::DisplayService.set_display_service_class(Scarpe::Wasm::DisplayService)
+Shoes::DisplayService.set_display_service_class(SpaceShoes::DisplayService)
 
 # Called when loading a Shoes app into the browser.
 def browser_shoes_code(url, code)

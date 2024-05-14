@@ -31,7 +31,7 @@ rescue LoadError
 end
 
 #require "space_shoes/http_server"
-require "space_shoes/packaging"
+require "space_shoes/host/packaging"
 require "scarpe/components/version"
 
 require "shoes"
