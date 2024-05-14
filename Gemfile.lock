@@ -40,10 +40,10 @@ GEM
     mini_mime (1.1.5)
     mini_portile2 (2.8.6)
     minitest (5.22.3)
-    nokogiri (1.16.4)
+    nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    nokogiri (1.16.4-x86_64-darwin)
+    nokogiri (1.16.5-x86_64-darwin)
       racc (~> 1.4)
     public_suffix (5.0.5)
     racc (1.7.3)
@@ -75,6 +75,7 @@ DEPENDENCIES
   js
   lacci!
   minitest (~> 5.16)
+  nokogiri (>= 1.16.5)
   rake (~> 13.0)
   ruby_wasm (~> 2.5)
   scarpe-components!

@@ -14,6 +14,7 @@ group :development do
   gem "webrick", "~> 1.8.1"
   gem "capybara"
   gem "selenium-webdriver"
+  gem "nokogiri", ">= 1.16.5" # Capybara dependency
 end
 
 gem "lacci", github: "scarpe-team/scarpe", glob: "lacci/lacci.gemspec"
