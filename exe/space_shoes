@@ -117,17 +117,8 @@ when "-v"
   puts "SpaceShoes #{SpaceShoes::VERSION}"
   puts "Scarpe-Components #{Scarpe::Components::VERSION}"
   puts "Lacci #{Lacci::VERSION}"
-when "build-ruby"
-  include SpaceShoes::Packaging
-
-  build_ruby_wasm_binary
-
-  puts "Built Wasm Ruby to default location: #{BUILT_RUBY_WASM.inspect}"
 when "build-default"
   include SpaceShoes::Packaging
-
-  # Ensure Ruby binary exists first
-  build_ruby_wasm_binary
 
   location = build_default_wasm_package
   puts "Built default Ruby Wasm package to #{location.inspect}"

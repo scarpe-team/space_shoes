@@ -35,12 +35,6 @@ class TestSpaceShoesSimpleCommands < SpaceShoesCLITest
 end
 
 class TestSpaceShoesBuild < SpaceShoesCLITest
-  def test_space_shoes_build_ruby_basic
-    Dir.chdir(ROOT_DIR) do
-      out_or_fail "exe/space-shoes --dev build-ruby"
-    end
-  end
-
   def test_space_shoes_build_ruby_default
     Dir.chdir(ROOT_DIR) do
       out_or_fail "exe/space-shoes --dev build-default"
