@@ -43,7 +43,7 @@ module SpaceShoes
       Dir.chdir(pack_root) do
         # Use the packaging dir's Bundler setup, not what the outer program was run with
         Bundler.with_unbundled_env do
-          FileUtils.rm out_file
+          FileUtils.rm out_file if File.exist?(out_file)
           run_or_raise("bundle exec rbwasm build -o #{out_file}")
         end
       end
