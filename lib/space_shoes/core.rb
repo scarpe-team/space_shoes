@@ -15,4 +15,6 @@ module SpaceShoes::Errors
   class BadDisplayClassType < SpaceShoes::Error; end
   class MissingClassError < SpaceShoes::Error; end
   class MissingAttributeError < SpaceShoes::Error; end
+  class DuplicateCallbackError < SpaceShoes::Error; end
+  class UnknownEventTypeError < SpaceShoes::Error; end
 end
