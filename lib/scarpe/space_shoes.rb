@@ -65,15 +65,15 @@ require "space_shoes/guest/drawable"
 
 require "space_shoes/guest/web_wrangler"
 require "space_shoes/guest/control_interface"
-
-#require "space_shoes/guest/radio"
-#
-#require "space_shoes/guest/art_drawables"
-#
 require "space_shoes/guest/app"
-#require "space_shoes/guest/para"
+
 require "space_shoes/guest/slot"
 require "space_shoes/guest/document_root"
+
+require "space_shoes/guest/art_drawables"
+#require "space_shoes/guest/radio"
+
+require "space_shoes/guest/para"
 #require "space_shoes/guest/subscription_item"
 require "space_shoes/guest/button"
 #require "space_shoes/guest/progress"
