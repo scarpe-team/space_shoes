@@ -17,4 +17,5 @@ module SpaceShoes::Errors
   class MissingAttributeError < SpaceShoes::Error; end
   class DuplicateCallbackError < SpaceShoes::Error; end
   class UnknownEventTypeError < SpaceShoes::Error; end
+  class UnknownShoesEventAPIError < SpaceShoes::Error; end
 end
