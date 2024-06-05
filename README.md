@@ -4,23 +4,42 @@ SpaceShoes allows embedding Ruby GUI code in your web pages. You can embed simpl
 
 SpaceShoes is based on [Scarpe](https://github.com/scarpe-team/scarpe), which is a reimplementation of Shoes by [_why the lucky stiff](https://en.wikipedia.org/wiki/Why_the_lucky_stiff). It contains a lot of code from [Scarpe-Wasm](https://github.com/scarpe-team/scarpe-wasm) by [Giovanni Borgh](https://github.com/alawysdelta/) and [Noah Gibbs](https://github.com/noahgibbs).
 
-## Javascript-Based Installation
+## The Simplest Spacewalk
 
-SpaceShoes operates in two ways. You can use it in a Ruby application and bundle that into a web site. Or you can use it via a Wasm module included from Javascript.
+SpaceShoes does a few different tricks. The easiest is for you to add a line in an HTML page and then run your Shoes app right from the page.
 
-JS-based installation is useful if you have a single Shoes file with no additional files included, or with only assets you can reference via URL. It's a great way to experiment with SpaceShoes without repeated build steps.
+Here's how that looks:
 
-You'll still need to create a Wasm module containing the SpaceShoes code and some default gems and so on. Eventually we'll have a prebuilt default for this accessible directly, but for now you'll have to build your own.
+~~~HTML
+<!DOCTYPE html>
+<html lang="en">
+  <head>
 
-    $ space_shoes build-default
+  <script type="module" src="spacewalk.js"></script>
+  <script type="text/ruby">
+    Shoes.app do
+      @p = para "Buttons are good!"
+      button("OK") { @p.replace("Buttons are amazing!") }
+    end
+  </script>
 
-(MORE INSTALL INSTRUCTIONS HERE)
+  </head>
+  <body>
+  </body>
+</html>
+~~~
 
-## Ruby-Based Applications
+That little block with Shoes.app inside the Ruby script block? That's a real Shoes app, running [ruby.wasm](https://github.com/ruby/ruby.wasm). If you put other Ruby code in there, it will do Ruby things. If you put other Shoes code in there, it will do Shoes things.
+
+But first you'll need that spacewalk.js file to exist and be useful. If you've checked out the SpaceShoes repository, a simple "bundle install" followed by "./exe/space-shoes --dev build-default" will create the files you need.
+
+(TODO: add npm-module-based spacewalks)
+
+## Bundled Applications
 
 If you want or need multiple files bundled into a Wasm module, you'll start from the Ruby side.
 
-Install the gem and add to the application's Gemfile by executing:
+Add SpaceShoes to the application's Gemfile by executing:
 
     $ bundle add space_shoes
 
@@ -28,19 +47,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
     $ gem install space_shoes
 
-You can directly run SpaceShoes-based apps from the command line, which will package the application and run a browser:
-
-    $ space_shoes my_app.rb
-
-You can also package a SpaceShoes application to be included in a web page of your choice:
-
-    $ space_shoes src-package my_app_dir
-
 (MORE INSTALL INSTRUCTIONS HERE)
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 
