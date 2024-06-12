@@ -3,7 +3,9 @@
 import { DefaultRubyVM } from "https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@2.6.0/dist/browser/+esm";
 
 // For Ruby.wasm VM:
-const response = await fetch("./packed_ruby.wasm");
+// Not for location, but for the source file
+const packedURL = document.currentScript.split("/").slice(0,-1).join("/") + "/packed_ruby.wasm";
+const response = await fetch(packedURL);
 const module = await WebAssembly.compileStreaming(response);
 
 const { vm } = await DefaultRubyVM(module);

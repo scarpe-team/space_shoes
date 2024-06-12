@@ -1,6 +1,6 @@
 {
   "name": "@spaceshoes/spacewalk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Default SpaceShoes setup for easy in-browser Shoes apps",
   "main": "index.js",
   "scripts": {
