@@ -3,9 +3,13 @@
 require "cgi"
 require_relative "wasm_calls"
 
-# TODO: this can get simpler. No such thing as waiting changes,
-# DOM changes can use the ruby.wasm JS APIs. Maybe even js_wrapped_code,
-# eval, etc. can go away?
+# TODO: this can get simpler. What can we get rid of?
+#
+# * Waiting changes
+# * JS for DOM changes -- can use the ruby.wasm JS APIs
+# * Can eval hook and EVAL_RESULT go away in favour of instantly running JS code?
+# * Can js_wrapped_code go away?
+# * Most of ElementWrangler and DOMWrangler?
 
 module SpaceShoes
   class WebWrangler

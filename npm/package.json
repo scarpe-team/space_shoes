@@ -1,0 +1,24 @@
+{
+  "name": "@spaceshoes/spacewalk",
+  "version": "0.1.4",
+  "description": "Default SpaceShoes setup for easy in-browser Shoes apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo ok"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scarpe-team/space_shoes.git"
+  },
+  "keywords": [
+    "gui",
+    "ruby",
+    "shoes"
+  ],
+  "author": "Noah Gibbs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scarpe-team/space_shoes/issues"
+  },
+  "homepage": "https://github.com/scarpe-team/space_shoes#readme"
+}

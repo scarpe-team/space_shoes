@@ -2,9 +2,11 @@
 // version we used to build the Wasm package below?
 import { DefaultRubyVM } from "https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@2.6.0/dist/browser/+esm";
 
-// For Locally-compiled Ruby.wasm VM:
-const response = await fetch("./packed_ruby.wasm");
-const module = await WebAssembly.compile(await response.arrayBuffer());
+// For Ruby.wasm VM:
+// Not for location, but for the source file
+const packedURL = import.meta.url.split("/").slice(0,-1).join("/") + "/packed_ruby.wasm";
+const response = await fetch(packedURL);
+const module = await WebAssembly.compileStreaming(response);
 
 const { vm } = await DefaultRubyVM(module);
 

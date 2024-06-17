@@ -15,7 +15,7 @@ Here's how that looks:
 <html lang="en">
   <head>
 
-  <script type="module" src="spacewalk.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@spaceshoes/spacewalk/spacewalk.js"></script>
   <script type="text/ruby">
     Shoes.app do
       @p = para "Buttons are good!"
@@ -29,45 +29,87 @@ Here's how that looks:
 </html>
 ~~~
 
-That little block with Shoes.app inside the Ruby script block? That's a real Shoes app, running [ruby.wasm](https://github.com/ruby/ruby.wasm). If you put other Ruby code in there, it will do Ruby things. If you put other Shoes code in there, it will do Shoes things.
+That little text/ruby block with Shoes.app inside the Ruby script block? That's a real Shoes app, running [ruby.wasm](https://github.com/ruby/ruby.wasm). If you put other Ruby code in there, it will do Ruby things. If you put other Shoes code in there, it will do Shoes things. It's all done in your browser.
 
-But first you'll need that spacewalk.js file to exist and be useful. If you've checked out the SpaceShoes repository, a simple "bundle install" followed by "./exe/space-shoes --dev build-default" will create the files you need.
+You don't have to have Ruby installed. You don't need to clone the SpaceShoes repository. All you need is to create a little HTML file and open it in the browser. It's even fine as a file URL.
 
-(TODO: add npm-module-based spacewalks)
+## Local Spacewalk
 
-## Bundled Applications
+If you've cloned the repository, you can build your own spacewalk.js. Run "bundle install" to get the appropriate gems and then run this:
 
-If you want or need multiple files bundled into a Wasm module, you'll start from the Ruby side.
+    ./exe/space-shoes --dev build-default
+
+That will build a local packed_ruby.wasm containing a Ruby build and your locally-modified version of SpaceShoes. If you make changes to SpaceShoes, that's a great way to test them.
+
+You can also run the tests:
+
+    rake test
+
+There's a little example of using local SpaceShoes in html/templates/shoes_embed.html. It uses the spacewalk.js in html/templates. It won't work with a file URL though, because CORS policy doesn't like file URLs. So you'll need to run a local HTML server in the appropriate directory, something like this:
+
+    # From SpaceShoes root directory
+    ruby -run -e httpd -- -p 4321 .
+
+Then you can access it with a local URL like "http://localhost:4321/html/templates/shoes_embed.html"
+
+## Your Very Own Spacewalk
+
+You can also build a packaged-up file for your app. If you want or need multiple files bundled into a Wasm module, you'll start from the Ruby side.
 
 Add SpaceShoes to the application's Gemfile by executing:
 
     $ bundle add space_shoes
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+~~~HTML
+<!DOCTYPE html>
+<html lang="en">
+  <head>
 
-    $ gem install space_shoes
+  <script type="module" src="spacewalk.js"></script>
+  <script type="text/ruby">
+    Shoes.app do
+      para "Images are good too."
+      image "my_local_file.png" # TODO: test me!
+    end
+  </script>
 
-(MORE INSTALL INSTRUCTIONS HERE)
+  </head>
+  <body>
+  </body>
+</html>
+~~~
+
+TODO: more information about how to make this work.
+
+## Binaryen
+
+* https://github.com/WebAssembly/binaryen/releases
+* tested with version 117
+* install for your platform
+* copy wasm-opt into your path
+
+```
+# Taken from Largo's ruby.wasm build instructions
+bundle exec rbwasm --log-level debug build --ruby-version 3.3 --target wasm32-unknown-wasi --build-profile full  -o ruby-app.wasm
+# Remove the debug info
+wasm-opt --strip-debug ruby-app.wasm -o ruby-app.wasm
+# Optimize for size without hurting speed as much.
+wasm-opt ruby-app.wasm -Os -o ruby-app.wasm
+```
+
+To create a new NPM package you'll need to use wasm-opt to reduce the file size below 50MB.
 
 ## Development
 
-You'll need a Ruby-based install to help develop SpaceShoes.
+You'll need a Ruby-based install to help develop SpaceShoes. You'll need Ruby 3.2 or later, probably installed via a version manager like chruby or rvm.
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/scarpe-team/space_shoes. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/scarpe-team/space_shoes/blob/main/CODE_OF_CONDUCT.md).
 
-## References
-
-This will package gems in ruby.wasm, built into the Ruby binary
-    bundle exec rbwasm build --ruby-version 3.3 -o ruby.wasm
-
-Think we can use the built Ruby-with-gems with rbwasm pack to combine with source dir
-    bundle exec rbwasm pack ruby.wasm --mapdir GUESTDIR:HOSTDIR -o packed_ruby.wasm
+## Random Notes and References
 
 To install wasmtime for testing: https://github.com/bytecodealliance/wasmtime
 
