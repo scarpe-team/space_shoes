@@ -4,7 +4,7 @@ import { DefaultRubyVM } from "https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@2.6.
 
 // For Locally-compiled Ruby.wasm VM:
 const response = await fetch("./packed_ruby.wasm");
-const module = await WebAssembly.compileStreaming(response);
+const module = await WebAssembly.compile(await response.arrayBuffer());
 
 const { vm } = await DefaultRubyVM(module);
 
