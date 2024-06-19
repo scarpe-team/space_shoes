@@ -4,7 +4,8 @@
   <script type="module" src="spacewalk.js"></script>
   <script type="text/ruby">
     Shoes.app do
-      button "OK"
+      @p = para "Hm..."
+      button("OK") { @p.replace("Aha!") }
     end
   </script>
   </head>
