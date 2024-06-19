@@ -2,13 +2,13 @@
 
 require "test_helper"
 
-#class Scarpe::TestUnifiedPackageWasm < WasmPackageTestCase
-#  def test_app_runs
-#    with_app("button_alert") do
-#      assert_selector("button")
-#    end
-#  end
-#
+class Scarpe::TestUnifiedPackageWasm < SpaceShoesPackagedTest
+  def test_app_runs
+    with_app("/app_tiny_button.html") do
+      assert_selector("button")
+    end
+  end
+
 #  def test_button_creates_alert
 #    with_app("button_alert") do
 #      assert_selector("button")
@@ -27,4 +27,4 @@ require "test_helper"
 #      assert page.html.include?("edit_line here")
 #    end
 #  end
-#end
+end

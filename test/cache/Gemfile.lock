@@ -1,0 +1,19 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    lacci (0.4.0)
+      scarpe-components (~> 0.4.0)
+    scarpe-components (0.4.0)
+    space_shoes (0.1.0)
+      lacci
+      scarpe-components
+
+PLATFORMS
+  ruby
+  x86_64-darwin-22
+
+DEPENDENCIES
+  space_shoes
+
+BUNDLED WITH
+   2.5.3
