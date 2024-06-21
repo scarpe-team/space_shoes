@@ -15,7 +15,7 @@ module SpaceShoes
     def properties_changed(changes)
       checked = changes.delete("checked")
 
-      html_element.toggle_input_button(checked)
+      html_element.set_input_button(checked)
 
       super
     end

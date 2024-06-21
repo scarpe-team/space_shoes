@@ -333,12 +333,14 @@ module SpaceShoes
   end
 end
 
-# For now we don't need one of these to add DOM elements, just to manipulate them
-# after initial render.
-class Scarpe::WebWrangler
-  class ElementWrangler
-    attr_reader :html_id
+# Docs for ruby.wasm js gem:
+# https://github.com/ruby/ruby.wasm/blob/main/packages/gems/js/lib/js.rb
 
+class Scarpe::WebWrangler
+  # For now we don't need one of these to add DOM elements, just to manipulate them
+  # after initial render.
+  JS_NULL = JS.eval("null")
+  class ElementWrangler
     # Create an ElementWrangler for the given HTML ID or selector.
     # The caller should provide exactly one of the html_id or selector.
     #
@@ -347,97 +349,92 @@ class Scarpe::WebWrangler
       @webwrangler = SpaceShoes::DisplayService.instance.wrangler
       raise Scarpe::MissingWranglerError, "Can't get WebWrangler!" unless @webwrangler
 
-      if html_id && !selector
-        @selector = "document.getElementById('" + html_id + "')"
-      elsif selector && !html_id
-        @selector = selector
-      else
-        raise ArgumentError, "Must provide exactly one of html_id or selector!"
-      end
-
+      @html_id = html_id
       @multi = multi
+      @selector = selector
     end
 
     private
 
-    def on_each(fragment)
+    def on_each(&block)
       if @multi
-        @webwrangler.dom_change("a = Array.from(#{@selector}); a.forEach((item) => item#{fragment}); true")
+        items = JS.eval(@selector)
+        STDERR.puts "Multi selector: #{@selector.inspect} #{items.inspect}"
+        items.each(&block)
       else
-        @webwrangler.dom_change(@selector + fragment + ";true")
+        item = JS.global[:document].getElementById(@html_id)
+        STDERR.puts "Single selector: #{@html_id.inspect} / #{item.inspect}" if item == JS_NULL
+        yield(item) if item != JS_NULL
       end
     end
 
     public
 
-    # Return a promise that will be fulfilled when all changes scheduled via
-    # this ElementWrangler are verified complete.
-    #
-    # @return [Scarpe::Promise] a promise that will be fulfilled when scheduled changes are complete
-    def promise_update
-      @webwrangler.dom_promise_redraw
-    end
-
     # Update the JS DOM element's value. The given Ruby value will be converted to string and assigned in backquotes.
     #
     # @param new_value [String] the new value
-    # @return [Scarpe::Promise] a promise that will be fulfilled when the change is complete
+    # @return [nil]
     def value=(new_value)
-      on_each(".value = `" + new_value + "`")
+      on_each { |item| item[:value] = new_value }
+      nil
     end
 
     # Update the JS DOM element's inner_text. The given Ruby value will be converted to string and assigned in single-quotes.
     #
     # @param new_text [String] the new inner_text
-    # @return [Scarpe::Promise] a promise that will be fulfilled when the change is complete
+    # @return [nil]
     def inner_text=(new_text)
-      on_each(".innerText = '" + new_text + "'")
+      on_each { |item| item[:innerText] = new_text }
     end
 
     # Update the JS DOM element's inner_html. The given Ruby value will be converted to string and assigned in backquotes.
     #
     # @param new_html [String] the new inner_html
-    # @return [Scarpe::Promise] a promise that will be fulfilled when the change is complete
+    # @return [nil]
     def inner_html=(new_html)
-      on_each(".innerHTML = `" + new_html + "`")
+      on_each { |item| item[:innerHTML] = new_html }
     end
 
     # Update the JS DOM element's outer_html. The given Ruby value will be converted to string and assigned in backquotes.
     #
     # @param new_html [String] the new outer_html
-    # @return [Scarpe::Promise] a promise that will be fulfilled when the change is complete
+    # @return [nil]
     def outer_html=(new_html)
-      on_each(".outerHTML = `" + new_html + "`")
+      on_each { |item| item[:outerHTML] = new_html }
     end
 
     # Update the JS DOM element's attribute. The given Ruby value will be inspected and assigned.
     #
     # @param attribute [String] the attribute name
     # @param value [String] the new attribute value
-    # @return [Scarpe::Promise] a promise that will be fulfilled when the change is complete
+    # @return [nil]
     def set_attribute(attribute, value)
-      on_each(".setAttribute(" + attribute.inspect + "," + value.inspect + ")")
+      on_each { |item| item.call(:setAttribute, attribute, value) }
     end
 
     # Update an attribute of the JS DOM element's style. The given Ruby value will be inspected and assigned.
     #
     # @param style_attr [String] the style attribute name
     # @param value [String] the new style attribute value
-    # @return [Scarpe::Promise] a promise that will be fulfilled when the change is complete
+    # @return [nil]
     def set_style(style_attr, value)
-      on_each(".style.#{style_attr} = " + value.inspect + ";")
+      on_each { |item| item[:style][style_attr] = value }
     end
 
     # Remove the specified DOM element
     #
-    # @return [Scarpe::Promise] a promise that wil be fulfilled when the element is removed
+    # @return [nil]
     def remove
-      on_each(".remove()")
+      on_each(&:remove)
     end
 
-    def toggle_input_button(mark)
+    # Set an input checkbox to true or false
+    #
+    # @param mark [Boolean] whether to mark the checkbox true or false
+    # @return [nil]
+    def set_input_button(mark)
       checked_value = mark ? "true" : "false"
-      on_each(".checked = #{checked_value}")
+      on_each { |item| item[:checked] = checked_value }
     end
   end
 end
