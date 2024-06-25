@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 # The ControlInterface is used for testing. It's a way to register interest
-# in important events like redraw, init and shutdown, and to configure a
+# in important events like init and shutdown, and to configure a
 # Shoes app for testing.
 module SpaceShoes
   class ControlInterface
     include Shoes::Log
 
-    SUBSCRIBE_EVENTS = [:init, :shutdown, :next_redraw, :every_redraw, :next_heartbeat, :every_heartbeat]
-    DISPATCH_EVENTS = [:init, :shutdown, :redraw, :heartbeat]
+    SUBSCRIBE_EVENTS = [:init, :shutdown, :next_heartbeat, :every_heartbeat]
+    DISPATCH_EVENTS = [:init, :shutdown, :heartbeat]
     INVALID_SYSTEM_COMPONENTS_MESSAGE = "Must pass non-nil app and wrangler to ControlInterface#set_system_components!"
     CONTROL_INTERFACE_INIT_MESSAGE = "ControlInterface code needs to be wrapped in handlers like on_event(:init) " +
       "to make sure they have access to app, doc_root, wrangler, etc!"
@@ -45,8 +45,6 @@ module SpaceShoes
       @wrangler = wrangler
 
       @wrangler.control_interface = self
-
-      @wrangler.on_every_redraw { self.dispatch_event(:redraw) }
     end
 
     def app
@@ -93,18 +91,6 @@ module SpaceShoes
 
       if @do_shutdown
         @log.debug("CTL: Shutting down - not dispatching #{event}!")
-        return
-      end
-
-      if event == :redraw
-        dumb_dispatch_event(:every_redraw, *args, **keywords)
-
-        # Next redraw is interesting. We can add new handlers
-        # when dispatching a next_redraw handler. But we want
-        # each handler to run only once.
-        handlers = @event_handlers[:next_redraw]
-        dumb_dispatch_event(:next_redraw, *args, **keywords)
-        @event_handlers[:next_redraw] -= handlers
         return
       end
 

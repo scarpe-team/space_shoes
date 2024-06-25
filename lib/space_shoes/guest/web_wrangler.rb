@@ -5,11 +5,8 @@ require_relative "wasm_calls"
 
 # TODO: this can get simpler. What can we get rid of?
 #
-# * Waiting changes
-# * JS for DOM changes -- can use the ruby.wasm JS APIs
 # * Can eval hook and EVAL_RESULT go away in favour of instantly running JS code?
 # * Can js_wrapped_code go away?
-# * Most of ElementWrangler and DOMWrangler?
 
 module SpaceShoes
   class WebWrangler
@@ -42,13 +39,6 @@ module SpaceShoes
       # Better to have a single setInterval than many when we don't care too much
       # about the timing.
       @heartbeat_handlers = []
-
-      # Need to keep track of which wasm Javascript evals are still pending,
-      # what handlers to call when they return, etc.
-      @pending_evals = {}
-      @eval_counter = 0
-
-      @dom_wrangler = WebWrangler::DOMWrangler.new(self)
 
       @wasm.bind(EVAL_RESULT) do |*results|
         receive_eval_result(*results)
@@ -221,114 +211,9 @@ module SpaceShoes
     # This will often get rid of smaller changes in the queue, which is
     # a good thing since they won't have to be run.
     def replace(html_text)
-      @dom_wrangler.request_replace(html_text)
-    end
+      item = JS.global[:document].getElementById("wrapper-wvroot")
 
-    # Request a DOM change - return a promise for when this has been done.
-    def dom_change(js)
-      @dom_wrangler.request_change(js)
-    end
-
-    # Return a promise that will be fulfilled when all current DOM changes
-    # have committed (but not necessarily any future DOM changes.)
-    def dom_redraw
-      @dom_wrangler.redraw
-    end
-
-    # Return a promise which will be fulfilled the next time the DOM is
-    # fully up to date. Note that a slow trickle of changes can make this
-    # take a long time, since it is *not* only changes up to this point.
-    # If you want to know that some specific change is done, it's often
-    # easiest to use the promise returned by dom_change(), which will
-    # be fulfilled when that specific change commits.
-    def dom_fully_updated
-      @dom_wrangler.fully_updated
-    end
-
-    def on_every_redraw(&block)
-      @dom_wrangler.on_every_redraw(&block)
-    end
-  end
-end
-
-# Leaving DOM changes as "meh, async, we'll see when it happens" is terrible for testing.
-# Instead, we need to track whether particular changes have committed yet or not.
-# So we add a single gateway for all DOM changes, and we make sure its work is done
-# before we consider a redraw complete.
-#
-# DOMWrangler batches up changes - it's fine to have a redraw "in flight" and have
-# changes waiting to catch the next bus. But we don't want more than one in flight,
-# since it seems like having too many pending RPC requests can crash wasm. So:
-# one redraw scheduled and one redraw promise waiting around, at maximum.
-module SpaceShoes
-  class WebWrangler
-    class DOMWrangler
-      include Shoes::Log
-
-      attr_reader :waiting_changes
-
-      def initialize(web_wrangler, debug: false)
-        log_init("WebWrangler::DOMWrangler")
-
-        @wrangler = web_wrangler
-
-        @waiting_changes = []
-
-        # Initially we're waiting for a full replacement to happen.
-        # It's possible to request updates/changes before we have
-        # a DOM in place and before wasm is running. If we do
-        # that, we should discard those updates.
-        @first_draw_requested = false
-
-        @redraw_handlers = []
-      end
-
-      def request_change(js_code)
-        @log.debug("Requesting change with code #{js_code}")
-        # No updates until there's something to update
-        return unless @first_draw_requested
-
-        @waiting_changes << js_code
-
-        redraw
-      end
-
-      def self.replacement_code(html_text)
-        "document.getElementById('wrapper-wvroot').innerHTML = `#{html_text}`; true"
-      end
-
-      def request_replace(html_text)
-        @log.debug("Entering request_replace")
-        # Replace other pending changes, they're not needed any more
-        @waiting_changes = [DOMWrangler.replacement_code(html_text)]
-        @first_draw_requested = true
-
-        @log.debug("Requesting DOM replacement...")
-        redraw
-      end
-
-      def on_every_redraw(&block)
-        @redraw_handlers << block
-      end
-
-      def redraw
-        @log.debug("Requesting redraw with #{@waiting_changes.size} waiting changes - scheduling a new redraw for them!")
-        schedule_waiting_changes
-
-        @redraw_handlers.each(&:call)
-      end
-
-      private
-
-      # Put together the waiting changes into a new in-flight redraw request.
-      # Return it as a promise.
-      def schedule_waiting_changes
-        return if @waiting_changes.empty?
-
-        js_code = @waiting_changes.join(";")
-        @waiting_changes = [] # They're not waiting any more!
-        @wrangler.eval_js_async(js_code)
-      end
+      item[:innerHTML] = html_text
     end
   end
 end
@@ -337,14 +222,17 @@ end
 # https://github.com/ruby/ruby.wasm/blob/main/packages/gems/js/lib/js.rb
 
 class Scarpe::WebWrangler
+  JS_NULL = JS.eval("null")
+
   # For now we don't need one of these to add DOM elements, just to manipulate them
   # after initial render.
-  JS_NULL = JS.eval("null")
   class ElementWrangler
     # Create an ElementWrangler for the given HTML ID or selector.
     # The caller should provide exactly one of the html_id or selector.
     #
-    # @param html_id [String] the HTML ID for the DOM element
+    # @param html_id [String|NilClass] the HTML ID for the DOM element
+    # @param selector [String|NilClass] the selector to get the DOM element(s)
+    # @param multi [Boolean] whether the selector may return multiple DOM elements
     def initialize(html_id: nil, selector: nil, multi: false)
       @webwrangler = SpaceShoes::DisplayService.instance.wrangler
       raise Scarpe::MissingWranglerError, "Can't get WebWrangler!" unless @webwrangler
