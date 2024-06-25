@@ -101,7 +101,7 @@ module SpaceShoes
       hint = @resizable ? 0 : 3
 
       @wasm.set_title(@title)
-      @wasm.set_size(@width, @height, hint)
+      @wasm.set_size(@width, @height, hint) # Currently a no-op
       @wasm.navigate("data:text/html, #{empty}")
 
       @is_running = true
