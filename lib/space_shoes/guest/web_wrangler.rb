@@ -5,8 +5,7 @@ require_relative "wasm_calls"
 
 # TODO: this can get simpler. What can we get rid of?
 #
-# * Can eval hook and EVAL_RESULT go away in favour of instantly running JS code?
-# * Can js_wrapped_code go away?
+# * Can the ControlInterface go away and we'll just handle heartbeats here?
 
 module SpaceShoes
   class WebWrangler
@@ -16,12 +15,6 @@ module SpaceShoes
     attr_reader :is_terminated
     attr_reader :heartbeat # This is the heartbeat duration in seconds, usually fractional
     attr_reader :control_interface
-
-    # This is the JS function name for eval results
-    EVAL_RESULT = "scarpeAsyncEvalResult"
-
-    # Allow a half-second for wasm to finish our JS eval before we decide it's not going to
-    EVAL_DEFAULT_TIMEOUT = 0.5
 
     def initialize(title:, width:, height:, resizable: false, heartbeat: 0.1)
       log_init("SpaceShoes::WebWrangler")
@@ -39,10 +32,6 @@ module SpaceShoes
       # Better to have a single setInterval than many when we don't care too much
       # about the timing.
       @heartbeat_handlers = []
-
-      @wasm.bind(EVAL_RESULT) do |*results|
-        receive_eval_result(*results)
-      end
 
       # Ruby receives scarpeHeartbeat messages via the window library's main loop.
       # So this is a way for Ruby to be notified periodically, in time with that loop.
@@ -86,81 +75,15 @@ module SpaceShoes
       if interval == heartbeat
         @heartbeat_handlers << block
       else
-        if @is_running
-          # I *think* we need to use init because we want this done for every
-          # new window. But will there ever be a new page/window? Can we just
-          # use eval instead of init to set up a periodic handler and call it
-          # good?
-          raise Scarpe::PeriodicHandlerSetupError, "App is running, can't set up new periodic handlers with init!"
-        end
-
         js_interval = (interval.to_f * 1_000.0).to_i
         code_str = "setInterval(#{name}, #{js_interval});"
 
         bind(name, &block)
-        @wasm.init(code_str)
+        @wasm.eval(code_str)
       end
     end
 
     # Running callbacks
-
-    # js_eventually is a simple JS evaluation. On syntax error, nothing happens.
-    # On runtime error, execution stops at the error with no further
-    # effect or notification. This is rarely what you want.
-    # The js_eventually code is run asynchronously, returning neither error
-    # nor value.
-    #
-    # This method does *not* return a promise, and there is no way to track
-    # its progress or its success or failure.
-    def js_eventually(code)
-      raise Scarpe::WebWranglerNotRunningError, "WebWrangler isn't running, eval doesn't work!" unless @is_running
-
-      @wasm.eval(code)
-    end
-
-    # Eval a chunk of JS code asynchronously. This method returns a
-    # promise which will be fulfilled or rejected after the JS executes
-    # or times out.
-    #
-    # Note that we *both* care whether the JS has finished after it was
-    # scheduled *and* whether it ever got scheduled at all. If it
-    # depends on tasks that never fulfill or reject then it may wait
-    # in limbo, potentially forever.
-    #
-    # Right now we can't/don't handle arguments from previous fulfilled
-    # promises. To do that, we'd probably need to know we were passing
-    # in a JS function.
-    EVAL_OPTS = [:timeout, :wait_for]
-    def eval_js_async(code, opts = {})
-      @wasm.eval(code)
-    end
-
-    def self.js_wrapped_code(code, eval_id)
-      <<~JS_CODE
-        (function() {
-          var code_string = #{JSON.dump code};
-          try {
-            result = eval(code_string);
-            #{EVAL_RESULT}("success", #{eval_id}, result);
-          } catch(error) {
-            #{EVAL_RESULT}("error", #{eval_id}, error.message);
-          }
-        })();
-      JS_CODE
-    end
-
-    private
-
-    def receive_eval_result(r_type, id, val)
-      entry = @pending_evals.delete(id)
-      unless entry
-        raise Scarpe::NonexistentEvalResultError, "Received an eval result for a nonexistent ID #{id.inspect}!"
-      end
-
-      @log.debug("Got JS value: #{r_type} / #{id} / #{val.inspect}")
-    end
-
-    public
 
     attr_writer :empty_page
 
