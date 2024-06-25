@@ -5,7 +5,8 @@ require_relative "wasm_calls"
 
 # TODO: this can get simpler. What can we get rid of?
 #
-# * Can the ControlInterface go away and we'll just handle heartbeats here?
+# * Can the is_running distinction go away or get simpler?
+# * Can the ControlInterface go away and we'll just handle heartbeats here? Need to hook up app and wrangler somehow still
 
 module SpaceShoes
   class WebWrangler
