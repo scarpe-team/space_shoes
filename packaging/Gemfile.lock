@@ -1,16 +1,25 @@
+GIT
+  remote: https://github.com/scarpe-team/scarpe.git
+  revision: bddaf436b1152b2a8748c1d767db8cc31b52379a
+  branch: multi_app
+  glob: lacci/*.gemspec
+  specs:
+    lacci (0.4.0)
+      scarpe-components (~> 0.4.0)
+
 PATH
   remote: ..
   specs:
     space_shoes (0.1.0)
       lacci (~> 0.4.0)
+      minitest (~> 5.22)
       scarpe-components (~> 0.4.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
     js (2.6.0)
-    lacci (0.4.0)
-      scarpe-components (~> 0.4.0)
+    minitest (5.22.3)
     ruby_wasm (2.6.0)
     ruby_wasm (2.6.0-aarch64-linux)
     ruby_wasm (2.6.0-aarch64-linux-musl)
@@ -31,7 +40,7 @@ PLATFORMS
 
 DEPENDENCIES
   js
-  lacci (~> 0.4.0)
+  lacci (~> 0.4.0)!
   ruby_wasm (~> 2.5)
   scarpe-components (~> 0.4.0)
   space_shoes!

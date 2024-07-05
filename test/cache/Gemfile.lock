@@ -1,8 +1,15 @@
-GEM
-  remote: https://rubygems.org/
+GIT
+  remote: https://github.com/scarpe-team/scarpe.git
+  revision: bddaf436b1152b2a8748c1d767db8cc31b52379a
+  branch: multi_app
+  glob: lacci/*.gemspec
   specs:
     lacci (0.4.0)
       scarpe-components (~> 0.4.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
     scarpe-components (0.4.0)
     space_shoes (0.1.0)
       lacci
@@ -14,6 +21,7 @@ PLATFORMS
   x86_64-darwin-22
 
 DEPENDENCIES
+  lacci!
   space_shoes
   webrick
 

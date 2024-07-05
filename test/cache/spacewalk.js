@@ -21,6 +21,17 @@ vm.eval(`
 `);
 
 async function runShoesApps(vm) {
+  // If there's a Shoes-Spec script, make sure it gets loaded before the
+  // apps.
+  const tag = document.querySelector('script[type="text/shoes-spec"]');
+  if(tag) {
+    vm.eval(`
+      test_elt = JS.global[:document].querySelector('script[type="text/shoes-spec"]')
+      test_code = test_elt[:innerText]
+      Shoes::Spec.instance.run_shoes_spec_test_code test_code
+    `);
+  }
+
   const tags = document.querySelectorAll('script[type="text/ruby"]');
 
   // Get Ruby scripts in parallel.
@@ -32,31 +43,15 @@ async function runShoesApps(vm) {
   for await (const script of promisingRubyScripts) {
     if (script) {
       const { scriptContent, evalStyle } = script;
-      switch (evalStyle) {
-        case "async":
-          vm.evalAsync(scriptContent);
-          break;
-        case "sync":
-          vm.eval(scriptContent);
-          break;
-      }
+      vm.eval(scriptContent);
+      break;
     }
   }
+
 }
 
-function deriveEvalStyle(tag) {
-  const rawEvalStyle = tag.getAttribute("data-eval") || "sync";
-  if (rawEvalStyle !== "async" && rawEvalStyle !== "sync") {
-    console.warn(
-      `data-eval attribute of script tag must be "async" or "sync". ${rawEvalStyle} is ignored and "sync" is used instead.`,
-    );
-    return "sync";
-  }
-  return rawEvalStyle;
-};
-
 async function loadScriptAsync(tag) {
-  const evalStyle = deriveEvalStyle(tag);
+  const evalStyle = "sync";
   if (tag.hasAttribute("src")) {
     const url = tag.getAttribute("src");
     const response = await fetch(url);

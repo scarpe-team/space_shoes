@@ -31,10 +31,8 @@ Shoes::FONTS.push(
   "Monaco",
 )
 
-# When we require SpaceShoes' shoes-spec it will fill this in on the host side
-module Scarpe; module Test; end; end
-require "shoes-spec"
-Shoes::Spec.instance = Scarpe::Test
+require "space_shoes/guest/shoes-spec"
+Shoes::Spec.instance = SpaceShoes::ShoesSpec
 
 require "scarpe/components/html"
 module SpaceShoes

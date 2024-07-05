@@ -18,6 +18,7 @@ PATH
   specs:
     space_shoes (0.1.0)
       lacci (~> 0.4.0)
+      minitest (~> 5.22)
       scarpe-components (~> 0.4.0)
 
 GEM

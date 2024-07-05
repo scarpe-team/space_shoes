@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <script type="module" src="spacewalk.js"></script>
+  <script type="text/ruby">
+    Shoes.app do
+      @b = button "OK" do
+        @b.text = "Clicked"
+      end
+    end
+  </script>
+  <script type="text/shoes-spec">
+    assert_equal "OK", button().text
+    button().trigger_click
+    assert_equal "Clicked", button().text
+  </script>
+  </head>
+  <body>
+  </body>
+</html>

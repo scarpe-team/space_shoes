@@ -9,20 +9,18 @@ module SpaceShoes
         send_self_event(*args, event_name: @shoes_api_name)
       end
 
-      @wrangler = DisplayService.instance.wrangler
-
       case @shoes_api_name
       when "animate"
         frame_rate = (@args[0] || 10)
         @counter = 0
-        @wrangler.periodic_code("animate_#{@shoes_linkable_id}", 1.0 / frame_rate) do
+        WebWrangler.instance.periodic_code("animate_#{@shoes_linkable_id}", 1.0 / frame_rate) do
           @counter += 1
           send_self_event(@counter, event_name: @shoes_api_name)
         end
       when "every"
         delay = @args[0]
         @counter = 0
-        @wrangler.periodic_code("every_#{@shoes_linkable_id}", delay) do
+        WebWrangler.instance.periodic_code("every_#{@shoes_linkable_id}", delay) do
           @counter += 1
           send_self_event(@counter, event_name: @shoes_api_name)
         end

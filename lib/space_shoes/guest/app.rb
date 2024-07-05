@@ -27,6 +27,26 @@ module SpaceShoes
       bind_shoes_event(event_name: "init") { init }
       bind_shoes_event(event_name: "run") { run }
       bind_shoes_event(event_name: "destroy") { destroy }
+
+      # Run ShoesSpec tests on next heartbeat
+      @control_interface.on_event(:next_heartbeat) do
+        # If there's no error, this happens once. If an error is raised, keeps happening...
+
+        ## Put the true/false pass/fail into a location where JS can access it
+        e = Object.new # fake parallel executor
+        def e.shutdown; end
+        def e.start; end
+        Minitest.parallel_executor = e # No threads available in ruby.wasm
+        result = Minitest.run []
+        # TODO: add a DOM element or similar so we know when this is complete
+        JS.global[:document][:shoes_spec_passed] = result
+        elt = JS.global[:document].createElement("div")
+        elt[:className] = "minitest_result"
+        elt[:innerHTML] = "<p>#{result ? "passed" : "failed"}</p>"
+        JS.global[:document][:body].appendChild(elt)
+
+        Shoes.APPS.each(&:destroy) # Need more recent version of Lacci with multi-app
+      end
     end
 
     attr_writer :document_root
@@ -88,7 +108,7 @@ module SpaceShoes
     #
     # @return [void]
     def request_redraw!
-      wrangler = DisplayService.instance.wrangler
+      wrangler = WebWrangler.instance
       if wrangler.is_running
         wrangler.replace(@document_root.to_html)
       end

@@ -34,6 +34,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "lacci", "~>0.4.0"
   spec.add_dependency "scarpe-components", "~>0.4.0"
 
+  # For now, require as a direct dependency - needed so that minitest can run inside the browser in wasm
+  spec.add_dependency "minitest", "~>5.22"
+
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
 end

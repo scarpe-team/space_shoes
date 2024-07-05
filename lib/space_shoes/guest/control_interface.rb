@@ -16,9 +16,18 @@ module SpaceShoes
     attr_writer :doc_root
     attr_reader :do_shutdown
 
+    class << self
+      attr_accessor :instance
+    end
+
     # The control interface needs to see major system components to hook into their events
     def initialize
       log_init("SpaceShoes::ControlInterface")
+
+      if SpaceShoes::ControlInterface.instance
+        raise Shoes::Errors::TooManyInstancesError, "Cannot create multiple SpaceShoes::ControlInterface objects!"
+      end
+      SpaceShoes::ControlInterface.instance = self
 
       @do_shutdown = false
       @event_handlers = {}

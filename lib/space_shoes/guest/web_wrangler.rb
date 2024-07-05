@@ -12,6 +12,10 @@ module SpaceShoes
   class WebWrangler
     include Shoes::Log
 
+    class << self
+      attr_accessor :instance
+    end
+
     attr_reader :is_running
     attr_reader :is_terminated
     attr_reader :heartbeat # This is the heartbeat duration in seconds, usually fractional
@@ -19,6 +23,11 @@ module SpaceShoes
 
     def initialize(title:, width:, height:, resizable: false, heartbeat: 0.1)
       log_init("SpaceShoes::WebWrangler")
+
+      if SpaceShoes::WebWrangler.instance
+        raise Shoes::Errors::TooManyInstancesError, "Cannot create multiple SpaceShoes::WebWrangler objects!"
+      end
+      SpaceShoes::WebWrangler.instance = self
 
       @log.debug("Creating WebWrangler...")
 
@@ -37,8 +46,10 @@ module SpaceShoes
       # Ruby receives scarpeHeartbeat messages via the window library's main loop.
       # So this is a way for Ruby to be notified periodically, in time with that loop.
       @wasm.bind("scarpeHeartbeat") do
-        @heartbeat_handlers.each(&:call)
-        @control_interface.dispatch_event(:heartbeat)
+        unless @control_interface.do_shutdown
+          @heartbeat_handlers.each(&:call)
+          @control_interface.dispatch_event(:heartbeat)
+        end
       end
       js_interval = (heartbeat.to_f * 1_000.0).to_i
       @wasm.init("setInterval(scarpeHeartbeat,#{js_interval})")
@@ -158,9 +169,6 @@ class Scarpe::WebWrangler
     # @param selector [String|NilClass] the selector to get the DOM element(s)
     # @param multi [Boolean] whether the selector may return multiple DOM elements
     def initialize(html_id: nil, selector: nil, multi: false)
-      @webwrangler = SpaceShoes::DisplayService.instance.wrangler
-      raise Scarpe::MissingWranglerError, "Can't get WebWrangler!" unless @webwrangler
-
       @html_id = html_id
       @multi = multi
       @selector = selector
@@ -171,11 +179,9 @@ class Scarpe::WebWrangler
     def on_each(&block)
       if @multi
         items = JS.eval(@selector)
-        STDERR.puts "Multi selector: #{@selector.inspect} #{items.inspect}"
         items.each(&block)
       else
         item = JS.global[:document].getElementById(@html_id)
-        STDERR.puts "Single selector: #{@html_id.inspect} / #{item.inspect}" if item == JS_NULL
         yield(item) if item != JS_NULL
       end
     end
