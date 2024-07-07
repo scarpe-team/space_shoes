@@ -42,7 +42,8 @@ module SpaceShoes
         JS.global[:document][:shoes_spec_passed] = result
         elt = JS.global[:document].createElement("div")
         elt[:className] = "minitest_result"
-        elt[:innerHTML] = "<p>#{result ? "passed" : "failed"}</p>"
+        test_details = ShoesSpec.test_class.results # Should only be one test class
+        elt[:innerHTML] = "<p>#{result ? "passed" : "failed"}</p><p>#{test_details}</p>"
         JS.global[:document][:body].appendChild(elt)
 
         Shoes.APPS.each(&:destroy) # Need more recent version of Lacci with multi-app

@@ -4,6 +4,10 @@ require "minitest"
 
 module SpaceShoes
   class ShoesSpec
+    class << self
+      attr_accessor :test_class
+    end
+
     def self.run_shoes_spec_test_code(code, class_name: nil, test_name: nil)
       if @shoes_spec_init
         raise Shoes::Errors::MultipleShoesSpecRunsError, "SpaceShoes can only run a single Shoes spec per process!"
@@ -14,9 +18,30 @@ module SpaceShoes
       test_name ||= ENV["SHOES_MINITEST_METHOD_NAME"] || "test_shoes_spec"
 
       test_class = Class.new(SpaceShoes::ShoesSpecTest)
+      ShoesSpec.test_class = test_class
       Object.const_set(Scarpe::Components::StringHelpers.camelize(class_name), test_class)
       test_name = "test_" + test_name unless test_name.start_with?("test_")
       test_class.class_eval(<<~CLASS_EVAL)
+        attr_reader :reporter
+        attr_reader :summary
+
+        def self.run(reporter, options)
+          @reporter = reporter # When run, save a copy of reporter
+          @summary = reporter.reporters.grep(Minitest::SummaryReporter).first
+          super
+        end
+
+        def self.results
+          {
+            cases: @summary.count,
+            assertions: @summary.assertions, # number of assertions
+            failures: @summary.failures,     # number of failures
+            errors: @summary.errors,         # number of errors
+            skips: @summary.skips,           # number of skips
+            results: @summary.results,       # actual failure exception objects
+          }
+        end
+
         def #{test_name}
 #{code}
         end
