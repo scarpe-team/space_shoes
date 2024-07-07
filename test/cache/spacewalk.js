@@ -28,7 +28,11 @@ async function runShoesApps(vm) {
     vm.eval(`
       test_elt = JS.global[:document].querySelector('script[type="text/shoes-spec"]')
       test_code = test_elt[:innerText]
-      Shoes::Spec.instance.run_shoes_spec_test_code test_code
+      class_name = test_elt[:dataset][:classname]
+      class_name = nil if class_name == JS::Undefined
+      test_name = test_elt[:dataset][:testname]
+      test_name = nil if test_name == JS::Undefined
+      Shoes::Spec.instance.run_shoes_spec_test_code test_code, class_name:, test_name:
     `);
   }
 
