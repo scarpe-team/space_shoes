@@ -13,7 +13,7 @@ require "fileutils"
 require "socket"
 
 require "scarpe/components/unit_test_helpers"
-#require_relative "../lib/scarpe/space_shoes/shoes-spec"
+require "scarpe/components/port_helpers"
 
 require "space_shoes/host/shoes-spec-capybara-test"
 
@@ -38,7 +38,7 @@ end
 class SpaceShoesPackagedTest < SpaceShoes::ShoesSpecTest
   TEST_CACHE_DIR = File.expand_path(File.join __dir__, "cache")
 
-  include Scarpe::Components::PortUtils
+  include Scarpe::Components::PortHelpers
 
   def setup
     build_wasm_package

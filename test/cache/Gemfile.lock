@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/scarpe-team/scarpe.git
-  revision: b6b4b1f53dedd128382043474da28e294b736cab
+  revision: b59a3e4568ddc1941d0d08c75dfdc167c660b17e
   glob: lacci/*.gemspec
   specs:
     lacci (0.4.0)

@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/scarpe-team/scarpe.git
-  revision: b6b4b1f53dedd128382043474da28e294b736cab
+  revision: b59a3e4568ddc1941d0d08c75dfdc167c660b17e
   glob: lacci/*.gemspec
   specs:
     lacci (0.4.0)
@@ -19,15 +19,15 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    js (2.6.0)
-    minitest (5.22.3)
-    ruby_wasm (2.6.0)
-    ruby_wasm (2.6.0-aarch64-linux)
-    ruby_wasm (2.6.0-aarch64-linux-musl)
-    ruby_wasm (2.6.0-arm64-darwin)
-    ruby_wasm (2.6.0-x86_64-darwin)
-    ruby_wasm (2.6.0-x86_64-linux)
-    ruby_wasm (2.6.0-x86_64-linux-musl)
+    js (2.6.2)
+    minitest (5.24.1)
+    ruby_wasm (2.6.2)
+    ruby_wasm (2.6.2-aarch64-linux)
+    ruby_wasm (2.6.2-aarch64-linux-musl)
+    ruby_wasm (2.6.2-arm64-darwin)
+    ruby_wasm (2.6.2-x86_64-darwin)
+    ruby_wasm (2.6.2-x86_64-linux)
+    ruby_wasm (2.6.2-x86_64-linux-musl)
     scarpe-components (0.4.0)
 
 PLATFORMS
