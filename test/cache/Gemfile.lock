@@ -1,7 +1,6 @@
 GIT
   remote: https://github.com/scarpe-team/scarpe.git
-  revision: bddaf436b1152b2a8748c1d767db8cc31b52379a
-  branch: multi_app
+  revision: b6b4b1f53dedd128382043474da28e294b736cab
   glob: lacci/*.gemspec
   specs:
     lacci (0.4.0)

@@ -23,7 +23,6 @@ Capybara.app_host = "http://localhost:8080"
 # In setup, this will change the Capybara driver
 #Capybara.current_driver = :selenium_headless # example: use headless Firefox
 
-# Submit a PR to Scarpe-Components?
 module Scarpe::Components
   module PortUtils
     MAX_SERVER_STARTUP_WAIT = 5.0

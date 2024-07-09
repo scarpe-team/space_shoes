@@ -2,4 +2,4 @@ source "https://rubygems.org"
 
 gem "space_shoes"
 gem "webrick"
-gem "lacci", github: "scarpe-team/scarpe", glob: "lacci/*.gemspec", branch: "multi_app"
+gem "lacci", github: "scarpe-team/scarpe", glob: "lacci/*.gemspec"
