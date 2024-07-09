@@ -5,8 +5,7 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in space_shoes.gemspec
 gemspec
 
-gem "ruby_wasm", "~> 2.5"
-gem "js"
+#gem "js"
 
 group :development do
   gem "rake", "~> 13.0"

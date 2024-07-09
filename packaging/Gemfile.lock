@@ -11,8 +11,10 @@ PATH
   remote: ..
   specs:
     space_shoes (0.1.0)
+      js (~> 2.6)
       lacci (~> 0.4.0)
       minitest (~> 5.22)
+      ruby_wasm (~> 2.5)
       scarpe-components (~> 0.4.0)
 
 GEM

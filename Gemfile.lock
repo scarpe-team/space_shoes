@@ -17,8 +17,10 @@ PATH
   remote: .
   specs:
     space_shoes (0.1.0)
+      js (~> 2.6)
       lacci (~> 0.4.0)
       minitest (~> 5.22)
+      ruby_wasm (~> 2.5)
       scarpe-components (~> 0.4.0)
 
 GEM
@@ -36,7 +38,7 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
-    js (2.6.0)
+    js (2.6.2)
     matrix (0.4.2)
     mini_mime (1.1.5)
     mini_portile2 (2.8.6)
@@ -73,12 +75,10 @@ PLATFORMS
 
 DEPENDENCIES
   capybara
-  js
   lacci!
   minitest (~> 5.16)
   nokogiri (>= 1.16.5)
   rake (~> 13.0)
-  ruby_wasm (~> 2.5)
   scarpe-components!
   selenium-webdriver
   space_shoes!
