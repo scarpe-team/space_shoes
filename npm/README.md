@@ -9,3 +9,5 @@ For quick start with SpaceShoes and applications that don't need extra asset fil
 * npm login
 * npm publish --access public
 
+JSDelivr takes a few minutes to mirror the latest release from NPM.
+
