@@ -2,8 +2,9 @@
 // version we used to build the Wasm package below?
 import { DefaultRubyVM } from "https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@2.6.0/dist/browser/+esm";
 
-// For Locally-compiled Ruby.wasm VM:
-const response = await fetch("./packed_ruby.wasm");
+// For Ruby.wasm VM:
+const packedURL = import.meta.url.split("/").slice(0,-1).join("/") + "/packed_ruby.wasm";
+const response = await fetch(packedURL);
 const module = await WebAssembly.compile(await response.arrayBuffer());
 
 const { vm } = await DefaultRubyVM(module);
@@ -48,10 +49,8 @@ async function runShoesApps(vm) {
     if (script) {
       const { scriptContent, evalStyle } = script;
       vm.eval(scriptContent);
-      break;
     }
   }
-
 }
 
 async function loadScriptAsync(tag) {
