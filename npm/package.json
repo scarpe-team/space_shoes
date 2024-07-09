@@ -1,6 +1,6 @@
 {
   "name": "@spaceshoes/spacewalk",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "description": "Default SpaceShoes setup for easy in-browser Shoes apps",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,10 @@
     "gui",
     "ruby",
     "shoes"
+  ],
+  "files": [
+    "packed_ruby.wasm",
+    "spacewalk.js"
   ],
   "author": "Noah Gibbs",
   "license": "MIT",
