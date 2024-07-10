@@ -9,7 +9,7 @@ GIT
 PATH
   remote: ..
   specs:
-    space_shoes (0.1.0)
+    space_shoes (0.1.1)
       js (~> 2.6)
       lacci (~> 0.4.0)
       minitest (~> 5.22)
