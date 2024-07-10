@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# WHY DO REPEATED BUILDS OF RUBY KEEP MAKING IT BIGGER IN CACHE DIR?
-
 require "space_shoes/core"
 
 require "scarpe/components/file_helpers"
@@ -47,6 +45,8 @@ module SpaceShoes
           run_or_raise("bundle exec rbwasm build -o #{out_file}")
         end
       end
+
+      out_file
     end
 
     # Note: packed Ruby+source package should be outside the app dir (a.k.a. src dir)
@@ -57,42 +57,6 @@ module SpaceShoes
       build_packed_wasm_file(pack_root: PACKAGING_ROOT, out_file:)
 
       out_file
-    end
-
-    # TODO: index for prebuilt single-file Shoes app w/ no Gemfile
-    def build_html_index(wasm_url: "./packed_ruby.wasm")
-      rbwasm_version = RubyWasm::VERSION
-      <<~INDEX
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-
-          <script type="module">
-            import { DefaultRubyVM } from "https://cdn.jsdelivr.net/npm/@ruby/wasm-wasi@#{rbwasm_version}/dist/browser/+esm";
-
-            // For Locally-compiled Ruby.wasm VM:
-            const response = await fetch("#{wasm_url}");
-            const module = await WebAssembly.compileStreaming(response);
-
-            const { vm } = await DefaultRubyVM(module);
-
-            window.rubyVM = vm;
-
-            vm.eval(`
-              require "/bundle/setup"
-              require "js" # Needed even with /bundle/setup
-              $LOAD_PATH.unshift "/spaceshoes_lib"
-              require "space_shoes/core"
-              require "scarpe/space_shoes" # Scarpe display service
-            `);
-
-          </script>
-
-          </head>
-          <body>
-          </body>
-        </html>
-      INDEX
     end
   end
 end
