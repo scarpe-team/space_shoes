@@ -33,7 +33,43 @@ That little text/ruby block with Shoes.app inside the Ruby script block? That's 
 
 You don't have to have Ruby installed. You don't need to clone the SpaceShoes repository. All you need is to create a little HTML file and open it in the browser. It's even fine as a file URL.
 
-## Local Spacewalk
+## Your Very Own Spacewalk
+
+You can also use SpaceShoes to package up your app. If you want or need multiple files bundled into a Wasm module, you'll start from the Ruby side.
+
+Add SpaceShoes to the application's Gemfile by executing:
+
+    $ bundle add space_shoes
+
+Make sure it's installed:
+
+    $ bundle install
+
+SpaceShoes will make a package containing specific versions of Ruby and SpaceShoes, plus whatever other gems are in your Gemfile. It will pick up all the local files, including images and Ruby source files. Try not to have any huge files sitting around, or they will be included in your Wasm package!
+
+~~~HTML
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+  <script type="module" src="spacewalk.js"></script>
+  <script type="text/ruby">
+    Shoes.app do
+      para "Images are good too."
+      image "my_local_file.png"
+    end
+  </script>
+
+  </head>
+  <body>
+  </body>
+</html>
+~~~
+
+TODO: more information about how to make this work.
+
+
+## Developing Spacewalk
 
 If you've cloned the repository, you can build your own spacewalk.js. Run "bundle install" to get the appropriate gems and then run this:
 
@@ -51,35 +87,6 @@ There's a little example of using local SpaceShoes in html/templates/shoes_embed
     ruby -run -e httpd -- -p 4321 .
 
 Then you can access it with a local URL like "http://localhost:4321/html/templates/shoes_embed.html"
-
-## Your Very Own Spacewalk
-
-You can also build a packaged-up file for your app. If you want or need multiple files bundled into a Wasm module, you'll start from the Ruby side.
-
-Add SpaceShoes to the application's Gemfile by executing:
-
-    $ bundle add space_shoes
-
-~~~HTML
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-
-  <script type="module" src="spacewalk.js"></script>
-  <script type="text/ruby">
-    Shoes.app do
-      para "Images are good too."
-      image "my_local_file.png" # TODO: test me!
-    end
-  </script>
-
-  </head>
-  <body>
-  </body>
-</html>
-~~~
-
-TODO: more information about how to make this work.
 
 ## Binaryen
 
@@ -120,9 +127,9 @@ EvilMartians blog post on using Ruby.wasm's Bundler integration
 
 ## History
 
-[Giovanni Borgh](https://github.com/alawysdelta/) wrote the initial scarpe-wasm code, including tools like wasify, for his Google Summer of Code project. Noah Gibbs then adapted it to Scarpe and its dependencies (e.g. Lacci, Scarpe-Components, Calzini).
+[Giovanni Borgh](https://github.com/alawysdelta/) wrote the initial scarpe-wasm code, including tools like wasify, for his Google Summer of Code project. Noah Gibbs then adapted it to use Scarpe.
 
-The top-level structure of SpaceShoes is different from scarpe-wasm. But a lot of the actual initial code comes from scarpe-wasm and was co-written by Noah Gibbs and/or Giovanni Borgh. The import of scarpe-wasm doesn't attempt to tease all this apart accurately - there are some commits that credit Giovanni as co-author in general, but mostly the code is just copied over.
+Some of the top-level structure of SpaceShoes is different from scarpe-wasm. But a lot of the actual initial code comes from scarpe-wasm and was written by Noah Gibbs and/or Giovanni Borgh.
 
 ## License
 
