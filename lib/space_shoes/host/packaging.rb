@@ -28,6 +28,12 @@ module SpaceShoes
 
     public
 
+    def write_spacewalk_file(out_file:)
+      spacewalk_file = File.join(SOURCE_ROOT, "test/cache/spacewalk.js")
+      FileUtils.cp spacewalk_file, out_file
+      out_file
+    end
+
     def build_packed_wasm_file(pack_root: ".", out_file:)
       unless File.exist?(pack_root) && File.directory?(pack_root)
         raise SpaceShoes::Error, "Can't pack wasm file when source directory doesn't exist! source path: #{pack_root.inspect}"
