@@ -118,7 +118,11 @@ when "build-default"
   include SpaceShoes::Packaging
 
   location = build_default_wasm_package
-  puts "Built default Ruby Wasm package to #{location.inspect}"
+  sp_location = File.join(SpaceShoes::Packaging::PACKAGING_ROOT, "spacewalk.js")
+  sp_location = write_spacewalk_file(out_file: sp_location)
+
+  puts "Built default Ruby Wasm package to #{location}"
+  puts "Copied spacewalk.js to #{sp_location}"
 when "src-package"
   include SpaceShoes::Packaging
 

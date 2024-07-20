@@ -61,6 +61,8 @@ class TestSpaceShoesBuild < SpaceShoesCLITest
   def test_space_shoes_build_ruby_default
     Dir.chdir(ROOT_DIR) do
       out_or_fail "exe/space-shoes --dev build-default"
+      assert File.exist?("packaging/packed_ruby.wasm"), "In build-default, didn't create packed_ruby.wasm"
+      assert File.exist?("packaging/spacewalk.js"), "In build-default, didn't create spacewalk.js"
     end
   end
 end
