@@ -15,6 +15,8 @@ module SpaceShoes
     PACKAGING_ROOT = File.join(SOURCE_ROOT, "packaging")
     LIB_ROOT = File.join(SOURCE_ROOT, "lib")
 
+    OPTIONS = [ :full_rebuild ]
+
     private
 
     def run_or_raise(cmd)
@@ -34,7 +36,12 @@ module SpaceShoes
       out_file
     end
 
-    def build_packed_wasm_file(pack_root: ".", out_file:)
+    def build_packed_wasm_file(pack_root: ".", out_file:, options: {})
+      bad_opts = options.keys - OPTIONS
+      unless bad_opts.empty?
+        raise SpaceShoes::Error, "Illegal options passed when building wasm file: #{bad_opts.inspect}"
+      end
+
       unless File.exist?(pack_root) && File.directory?(pack_root)
         raise SpaceShoes::Error, "Can't pack wasm file when source directory doesn't exist! source path: #{pack_root.inspect}"
       end
@@ -45,9 +52,11 @@ module SpaceShoes
       end
 
       Dir.chdir(pack_root) do
-        # Delete any possible temp build files
-        ["rubies", "build", "spacewalk.js", "ruby.wasm", "packed_ruby.wasm"].each do |build_file|
-          FileUtils.rm_rf build_file
+        if options[:full_rebuild]
+          # Delete any possible temp build files
+          ["rubies", "build", "spacewalk.js", "ruby.wasm", "packed_ruby.wasm"].each do |build_file|
+            FileUtils.rm_rf build_file
+          end
         end
 
         # Use the packaging dir's Bundler setup, not what the outer program was run with
@@ -61,11 +70,11 @@ module SpaceShoes
     end
 
     # Note: packed Ruby+source package should be outside the app dir (a.k.a. src dir)
-    def build_default_wasm_package
+    def build_default_wasm_package(options: [])
       out_file = PACKAGING_ROOT + "/packed_ruby.wasm"
 
       # without parens on this call, Ruby grabs the next line as part of this one. Weird.
-      build_packed_wasm_file(pack_root: PACKAGING_ROOT, out_file:)
+      build_packed_wasm_file(pack_root: PACKAGING_ROOT, out_file:, options:)
 
       out_file
     end

@@ -8,6 +8,7 @@
 use_dev = ARGV.delete("--dev") ? true : false
 use_debug = ARGV.delete("--debug") ? true : false
 use_help = ARGV.delete("--help") ? true : false
+use_rebuild = ARGV.delete("--rebuild") ? true : false
 
 # Default to local webview display if not otherwise given
 ENV['SCARPE_DISPLAY'] ||= 'space_shoes'
@@ -117,7 +118,7 @@ when "-v"
 when "build-default"
   include SpaceShoes::Packaging
 
-  location = build_default_wasm_package
+  location = build_default_wasm_package(options: { full_rebuild: use_rebuild })
   sp_location = File.join(SpaceShoes::Packaging::PACKAGING_ROOT, "spacewalk.js")
   sp_location = write_spacewalk_file(out_file: sp_location)
 
