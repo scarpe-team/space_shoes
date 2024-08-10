@@ -45,6 +45,11 @@ module SpaceShoes
       end
 
       Dir.chdir(pack_root) do
+        # Delete any possible temp build files
+        ["rubies", "build", "spacewalk.js", "ruby.wasm", "packed_ruby.wasm"].each do |build_file|
+          FileUtils.rm_rf build_file
+        end
+
         # Use the packaging dir's Bundler setup, not what the outer program was run with
         Bundler.with_unbundled_env do
           FileUtils.rm out_file if File.exist?(out_file)
