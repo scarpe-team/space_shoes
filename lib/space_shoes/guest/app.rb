@@ -38,32 +38,34 @@ module SpaceShoes
         def e.start; end
         Minitest.parallel_executor = e # No threads available in ruby.wasm
         result = Minitest.run []
-        test_details = ShoesSpec.test_class.results # Should only be one test class
+        if ShoesSpec.test_class
+          test_details = ShoesSpec.test_class.results # Should only be one test class
 
-        JS.global[:document][:shoes_spec] = {}
+          JS.global[:document][:shoes_spec] = {}
 
-        JS.global[:document][:shoes_spec][:passed] = result
-        JS.global[:document][:shoes_spec][:cases] = test_details[:cases]
-        JS.global[:document][:shoes_spec][:assertions] = test_details[:assertions]
-        JS.global[:document][:shoes_spec][:failures] = test_details[:failures]
-        JS.global[:document][:shoes_spec][:errors] = test_details[:errors]
-        JS.global[:document][:shoes_spec][:skips] = test_details[:skips]
-        JS.global[:document][:shoes_spec][:err_objects] = test_details[:results].inspect
+          JS.global[:document][:shoes_spec][:passed] = result
+          JS.global[:document][:shoes_spec][:cases] = test_details[:cases]
+          JS.global[:document][:shoes_spec][:assertions] = test_details[:assertions]
+          JS.global[:document][:shoes_spec][:failures] = test_details[:failures]
+          JS.global[:document][:shoes_spec][:errors] = test_details[:errors]
+          JS.global[:document][:shoes_spec][:skips] = test_details[:skips]
+          JS.global[:document][:shoes_spec][:err_objects] = test_details[:results].inspect
 
-        elt = JS.global[:document].createElement("div")
-        elt[:className] = "minitest_result"
+          elt = JS.global[:document].createElement("div")
+          elt[:className] = "minitest_result"
 
-        elt[:dataset][:cases] = test_details[:cases]
-        elt[:dataset][:assertions] = test_details[:assertions]
-        elt[:dataset][:failures] = test_details[:failures]
-        elt[:dataset][:errors] = test_details[:errors]
-        elt[:dataset][:skips] = test_details[:skips]
-        elt[:dataset][:err_objects] = test_details[:results].inspect
+          elt[:dataset][:cases] = test_details[:cases]
+          elt[:dataset][:assertions] = test_details[:assertions]
+          elt[:dataset][:failures] = test_details[:failures]
+          elt[:dataset][:errors] = test_details[:errors]
+          elt[:dataset][:skips] = test_details[:skips]
+          elt[:dataset][:err_objects] = test_details[:results].inspect
 
-        elt[:innerHTML] = "<p>#{result ? "passed" : "failed"}</p><p>#{test_details}</p>"
-        JS.global[:document][:body].appendChild(elt)
+          elt[:innerHTML] = "<p>#{result ? "passed" : "failed"}</p><p>#{test_details}</p>"
+          JS.global[:document][:body].appendChild(elt)
 
-        Shoes.APPS.each(&:destroy) # Need more recent version of Lacci with multi-app
+          Shoes.APPS.each(&:destroy) # Need more recent version of Lacci with multi-app
+        end
       end
     end
 
